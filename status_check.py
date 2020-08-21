@@ -77,22 +77,10 @@ def completion (c_dict, course):
     # for s in students:
     return(comp_list)
 
-def dict2csv(dictlist, csvfile):
-    """
-    Takes a list of dictionaries as input and outputs a CSV file.
-    """
-    f = open(csvfile, 'wb')
-
-    fieldnames = dictlist[0].keys()
-
-    csvwriter = csv.DictWriter(f, delimiter=',', fieldnames=fieldnames)
-    csvwriter.writerow(dict((fn, fn) for fn in fieldnames))
-    for row in dictlist:
-        csvwriter.writerow(row)
-    fn.close()
 
 c1_comp = completion(c1, course("Chapter 1", c1[0]))
 print(c1_comp[0])
 print(c2[0])
 c2_comp = completion(c2, course("Chapter 2", c2[0]))
 print(c2_comp[4])
+
