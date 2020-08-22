@@ -43,9 +43,46 @@ courses = [c1,c2,c3,c4,c5,c6,c7,c8,c9,c10,c11,c12,c13,c14]
 # Remove extra information
 def clean_record(chap_comp_dict):
     """Removes extra information that is not necessary for current completion tracking and returns a list of dictionaries"""
+    chapter = chap_comp_dict
+    activities_01 = {key:value for key, value in chapter[0].items() if 'Complete' in str(value)}
+    # clean_chapter = clean_chapter.keys()
+    activities = ['Name', 'ID number', 'Institution', 'Email address']
+    temp = list(activities_01.keys())
+    for i in temp:
+        activities.append(i)
+    clean_chapter = []
+    # for c in chapter:
+    #     for key, v in c.items():
+    #         if 'Completed' in str(c[key]):
+    #             activities.append(key)
 
+    for d in chapter:
+        clean_student = {}
+        for k,v in d.items():
+            clean_student.update({'Name': d['Name']})
+            clean_student.update({'ID number': d['ID number']})
+            clean_student.update({'Institution': d['Institution']})
+            clean_student.update({'Email address': d['Email address']})
+            if k in activities:
+                if 'Completed' in str(v):
+                    v = 'Completed'
+                clean_student.update({k:v})
+        p = percent_complete(clean_student)
+        clean_student.update( {'Activities Complete': p[0]} )
+        clean_student.update( {'Total Activities': p[1]} )
+        clean_student.update( {'Percent Complete': p[2]} )
+        print(clean_student)
+        clean_chapter.append(clean_student)
+    return ( clean_chapter )
 def percent_complete(student):
     """Takes a dictionary record of chapter completion for a student and returns total number of activities, total completed and percentage"""
+    num_act = len( student.keys() )
+    num_comp = 0
+    for k,v in student.items():
+        if 'Completed' in str(v):
+            num_comp = num_comp + 1
+    percent = int(100*( num_comp/( num_act - 4) ))
+    return([num_comp,num_act,percent])
 # Count total activities
 
 # Count total activities completed
@@ -56,10 +93,19 @@ def percent_complete(student):
 def completion_report(list_of_c):
     """Takes a list of course records and makes a combined completion report for all students."""
 # Stretch goal would be to write them to a single excel file and/or make a completion report based on the status
+    clean_list = []
+    for c in list_of_c:
+        clean_list.append(clean_record(c))
 
 def export_records (dict, export_location):
     """Exports the clean completion records to a csv file on disk"""
 # Write all chapter's completion records to file
+
+
+clean_record(c1)
+
+
+
 
 # ***Boneyard***
 
