@@ -148,7 +148,7 @@ def make_report (chapter_list):
             checked = i['Teacher']
             quiz = 'Incomplete'
             chapter = i['Chapter']
-            st_brief = {'id_number': id_number, 'name': name, 'department': department,'percent_complete': percent, 'complete?': complete, 'chapter': chapter}
+            st_brief = {'id_number': id_number, 'name': name, 'department': department,'percent_complete': percent, 'complete?': complete, 'chapter': chapter,'Chapter': "Report"}
             ch_brief.append(st_brief)
         br_ch_list.append(ch_brief)
 
@@ -161,8 +161,9 @@ def make_report (chapter_list):
         # check each dict list in the br_ch list
         for d in br_ch_list:
             for i in d:
-                if i['name'] in names:
+                if i['name'] not in names:
                     print("Name Exists")
+                    
                     new_report.append(i)
                 else:
                     names[i['name']] = True
@@ -180,10 +181,12 @@ def make_report (chapter_list):
             # if name exists, add attributes to that dictionary
             # else:
             #     print('name exists')
-    print(names)
-    print(new_report)
+    # print(names)
+    # print(new_report)
     chapter_list.append(new_report)
+    print(chapter_list[11])
     return chapter_list
+
                 # if the name doesn't exist, add name and attributes as new dictionary
 
 
