@@ -119,14 +119,44 @@ def main_program ():
     for chapter in chapters:
         final_list.append(process_chapter(chapter))
     x=1
-    final_list = make_report(final_list)
+    final_list = make_report2(final_list)
     for d in final_list:
         chapter = d[0]['Chapter']
         # headers = d.keys()
         pandas.DataFrame(d).to_csv('status_update{}.csv'.format("_"+str(chapter)), header=True, index=False)
         x = x+1
     print("Check Complete.")
+def make_report2(chapter_list):
+    chapter_list = chapter_list
+    new_ch_list = []
+    report = []
+    names = {}
+    x = 0
+    for ch in chapter_list:
+        for record in ch:
+            x += 1
+            name = record['Name']
+            if name not in names:
+                print('Not in list: #{}'.format(str(x)+" - "+name))
+                names[name] = True
+                
+                if record['Course complete'] == 'Not Complete':
+                    complete = "Incomplete"
+                else:
+                    complete = 'Finished'
+                report.append({'name': record['Name'],'department':record['Department'], 'institution':record['Institution'], 'id_number': record['ID number'], 'percent_{}'.format(record['Chapter']): record['Percent Complete'], 'complete_{}'.format(record['Chapter']): complete, 'Chapter': "Record"})
+            else:
+                print('{} is in the list'.format(name.title()))
+                if record['Course complete'] == 'Not Complete':
+                    complete = "Incomplete"
+                else:
+                    complete = 'Finished'
+                for i in report:
+                    if i['name'] == record['Name']:
+                        i.update({'name': record['Name'],'department':record['Department'], 'institution':record['Institution'], 'id_number': record['ID number'], 'percent_{}'.format(record['Chapter']): record['Percent Complete'], 'complete_{}'.format(record['Chapter']): complete, 'Chapter': "Record"})
 
+    new_ch_list.append(report)
+    return new_ch_list
 def make_report (chapter_list):
     chapter_list = chapter_list
     br_ch_list = []
@@ -148,7 +178,7 @@ def make_report (chapter_list):
             checked = i['Teacher']
             quiz = 'Incomplete'
             chapter = i['Chapter']
-            st_brief = {'id_number': id_number, 'name': name, 'department': department,'percent_complete': percent, 'complete?': complete, 'chapter': chapter,'Chapter': "Report"}
+            st_brief = {'id_number': id_number, 'name': name, 'department': department,'percent_complete': percent, 'complete?': complete, 'chapter': chapter,}
             ch_brief.append(st_brief)
         br_ch_list.append(ch_brief)
 
@@ -157,19 +187,40 @@ def make_report (chapter_list):
 
         # dictionary of names created already to check against, including the name and its list position
         names = {}
-
-        # check each dict list in the br_ch list
-        for d in br_ch_list:
-            for i in d:
+        for ch in br_ch_list:
+            for i in ch:
                 if i['name'] not in names:
-                    print("Name Exists")
-                    
-                    new_report.append(i)
-                else:
-                    names[i['name']] = True
-                    for dict in new_report:
-                        if dict['name'] == i['name']:
-                            dict.update(i)
+                    name = i['name']
+                    names[name] = True
+        # check each dict list in the br_ch list
+        # for d in br_ch_list:
+        #     for i in d:
+        #         if i['name'] not in names:
+        #             names[i['name']] = True
+        #             n_i = {}
+        #             for k, v in i.items():
+        #                 if k == 'percent_complete' or 'complete?':
+        #                     n_i[k+'_'+chapter] = v
+        #                     print("?")
+        #                 else:
+        #                     n_i[k] = v
+        #                 # dict.update(n_i)
+        #             n_i['Chapter'] = "Report"
+        #             new_report.append(n_i)
+        #         else:
+        #             names[i['name']] = True
+        #             for dict in new_report:
+        #                 print (dict)
+        #                 name = i['name']
+        #                 print(dict[name])
+        #                 print(i['name'])
+        #                 if dict[name] == i['name']:
+        #                     chapter = i['chapter']
+        #                     n_i = {}
+        #                     for k, v in i:
+        #                         n_i[k+'_'+chapter] = v
+        #                         print("!")
+        #                     dict.update(n_i)
 
             # check each dictionary in the dict list
             # check name against list of names previously collected
@@ -184,7 +235,7 @@ def make_report (chapter_list):
     # print(names)
     # print(new_report)
     chapter_list.append(new_report)
-    print(chapter_list[11])
+    # print(chapter_list[11])
     return chapter_list
 
                 # if the name doesn't exist, add name and attributes as new dictionary
