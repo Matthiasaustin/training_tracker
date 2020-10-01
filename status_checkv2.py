@@ -46,19 +46,16 @@ def process_chapter(chapter):
     # Takes a chapter dictionary to process
     chapterX = chapter
 
-    # keep the first six values: ID, Name, ID number, Email address, Department, Institution
-    # Remove if there is "Completion Date" in key.
-
     # Read all key values from the dict
     chapterX_act = list(chapterX[0].keys())
     clean_act_list = []
+
     # Remove all "Date complete" headers from the list
     for i in chapterX_act:
         if "Completion date" not in str(i):
             clean_act_list.append(i)
 
     # create clean chapter from remaining values
-
     clean_chapter = []
     for d in chapterX:
         clean_student = {}
@@ -123,13 +120,14 @@ def main_program ():
     chapters = data_list[0]
     chapter_list = data_list[1]
     chapter_list.sort()
-    
+
     for chapter in chapters:
         final_list.append(process_chapter(chapter))
     x=1
     final_list = make_report2(final_list)
     for d in final_list:
         chapter = d[0]['Chapter']
+        print(chapter )
         # headers = d.keys()
         pandas.DataFrame(d).to_csv('status_update{}.csv'.format("_"+str(chapter)), header=True, index=False)
         x = x+1
@@ -148,7 +146,7 @@ def make_report2(chapter_list):
             if name not in names:
                 # print('Not in list: #{}'.format(str(x)+" - "+name))
                 names[name] = True
-                
+
                 if record['Course complete'] == 'Incomplete':
                     complete = "Incomplete"
                 else:
@@ -158,7 +156,7 @@ def make_report2(chapter_list):
                 # print('{} is in the list'.format(name.title()))
                 if record['Course complete'] == 'Incomplete':
                     complete = "Incomplete"
-                    
+
                 else:
                     complete = 'Finished'
                 for i in report:
