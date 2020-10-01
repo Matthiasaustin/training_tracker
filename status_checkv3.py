@@ -109,8 +109,8 @@ def make_report(chapter_list):
                         'Department':record['Department'],
                         'Institution':record['Institution'],
                     'ID Number': record['ID number'],
-                        'Percent {}'.format(record['Chapter']): record['Percent Complete'],
-                        'Complete {}'.format(record['Chapter']): complete,
+                        # 'Percent {}'.format(record['Chapter']): record['Percent Complete'],
+                        # 'Complete {}'.format(record['Chapter']): complete,
                         'Chapter': "Report",
                         'Completion Date {}'.format(record['Chapter']): completion_date}
                 )
@@ -123,8 +123,8 @@ def make_report(chapter_list):
                             'Department':record['Department'],
                                 'Institution':record['Institution'],
                                 'ID Number': record['ID number'],
-                                'Percent {}'.format(record['Chapter']): record['Percent Complete'],
-                                'Complete {}'.format(record['Chapter']): complete,
+                                # 'Percent {}'.format(record['Chapter']): record['Percent Complete'],
+                                # 'Complete {}'.format(record['Chapter']): complete,
                                 'Chapter': "Report",
                                 'Completion Date {}'.format(record['Chapter']): completion_date}
                         )

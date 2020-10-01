@@ -18,7 +18,10 @@ class formats():
         self.worksheet = worksheet
 
         self.complete_format = workbook.add_format({'bg_color': '#90F685'})
-        self.highlight_format = workbook.add_format({'bg_color': '#F4D03F'})
+
+        self.stale_format = workbook.add_format({'bg_color': '#82E0AA', 'bold': 1})
+        self.highlight_format = workbook.add_format({'bold': 1,'bg_color': '#58D68D','border': 6, 'border_color': 'red','align':'center', 'valign':'center'})
+
         self.started_format = workbook.add_format({'bg_color': '#F9E79F'})
         self.incomplete_format = workbook.add_format({'bg_color': '#EDBB99'})
         self.location = 'A2:BF100'
@@ -50,6 +53,12 @@ class formats():
                 'criteria': 'last 7 days',
                 'format': self.highlight_format}
 
+    def stale_date(self):
+        return {'type': 'date',
+                'criteria': 'less than',
+                'value' : datetime.datetime.now(),
+                'format': self.stale_format}
+
 def dict_format(dictionary):
     return dictionary
 
@@ -74,6 +83,7 @@ def report_writer(df):
     worksheet.conditional_format(format.location,format.con_complete())
     worksheet.conditional_format(format.location,format.con_notstarted())
     worksheet.conditional_format(format.location,format.con_started())
+    worksheet.conditional_format(format.location,format.stale_date())
 
 
     writer.save()
