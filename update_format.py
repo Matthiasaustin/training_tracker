@@ -2,6 +2,8 @@ import pandas as pd
 import csv
 import xlsxwriter as xl
 import datetime
+import os, sys, glob
+from pathlib import Path
 
 
 # Open a writer, workbook and sheet
@@ -9,7 +11,11 @@ import datetime
 # workbook = xl.Workbook('test.xlsx')
 # worksheet = workbook.add_worksheet()
 
-
+PATH = os.path.expanduser("~/Documents/!Matthias/code/training_reporter/export")
+date = datetime.datetime.date(datetime.datetime.now())
+joined = os.path.join(PATH,f"status_update_{date}.xlsx")
+print(joined)
+joined = Path(joined)
 
 # Formats
 class formats():
@@ -66,10 +72,9 @@ def df_format(df):
     return df
 
 def report_writer(df):
-    date = datetime.datetime.date(datetime.datetime.now())
     print(date)
     # create a writer to save the formatted report with the date to excel
-    writer = pd.ExcelWriter('formated_report_{}.xlsx'.format(date), engine='xlsxwriter')
+    writer = pd.ExcelWriter(joined, engine='xlsxwriter')
 
     df.to_excel(writer, sheet_name='Status Update {}'.format(date))
     workbook = writer.book
@@ -87,7 +92,7 @@ def report_writer(df):
 
 
     writer.save()
-    
+
 
 if __name__ == '__main__':
 

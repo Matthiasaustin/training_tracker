@@ -16,8 +16,9 @@ def import_data():
     ch_num = []
 
     # The general path to the fold that holds the data
-    PATH = os.path.expanduser("~/*Documents/*code/*training_tracker/*data")
+    # PATH = os.path.expanduser("~/*Documents/*code/*training_tracker/*data")
 
+    PATH = os.path.expanduser("~/*Documents/*!Matthias/*code/*training_reporter/*data")
     # what type of files are read in
     EXT = "*.csv"
 
