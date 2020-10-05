@@ -111,7 +111,7 @@ def make_report(chapter_list):
                         'Institution':record['Institution'],
                     'ID Number': record['ID number'],
                         # 'Percent {}'.format(record['Chapter']): record['Percent Complete'],
-                        # 'Complete {}'.format(record['Chapter']): complete,
+                        'Complete {}'.format(record['Chapter']): complete,
                         'Chapter': "Report",
                         'Completion Date {}'.format(record['Chapter']): completion_date}
                 )
@@ -125,12 +125,13 @@ def make_report(chapter_list):
                                 'Institution':record['Institution'],
                                 'ID Number': record['ID number'],
                                 # 'Percent {}'.format(record['Chapter']): record['Percent Complete'],
-                                # 'Complete {}'.format(record['Chapter']): complete,
+                                'Complete {}'.format(record['Chapter']): complete,
                                 'Chapter': "Report",
                                 'Completion Date {}'.format(record['Chapter']): completion_date}
                         )
 
-
+    for s in report:
+        s = chapter_format.hour_checker(s)
     return report
 
 def export_data(dict_list):

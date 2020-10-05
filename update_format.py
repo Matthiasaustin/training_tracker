@@ -13,6 +13,10 @@ from pathlib import Path
 
 PATH = os.path.expanduser("~/Documents/!Matthias/code/training_reporter/export")
 date = datetime.datetime.date(datetime.datetime.now())
+start_date = datetime.datetime.date(datetime.datetime.strptime('2020-9-30','%Y-%m-%d'))
+release_2 = start_date + datetime.timedelta(days=7)
+release_3 = start_date + datetime.timedelta(days=14)
+
 joined = os.path.join(PATH,f"status_update_{date}.xlsx")
 print(joined)
 joined = Path(joined)
@@ -30,7 +34,7 @@ class formats():
 
         self.started_format = workbook.add_format({'bg_color': '#F9E79F'})
         self.incomplete_format = workbook.add_format({'bg_color': '#EDBB99'})
-        self.location = 'A2:BF100'
+        self.location = 'A5:BF100'
 
     def con_complete(self):
         return {'type': 'text',
@@ -75,10 +79,89 @@ def report_writer(df):
     print(date)
     # create a writer to save the formatted report with the date to excel
     writer = pd.ExcelWriter(joined, engine='xlsxwriter')
+    df = df.reindex(columns = ['Department',
+                               'Name',
+                               'Institution',
+                               'ID Number',
+                               'Chapter',
+                               'Completion Date chapter_01',
+                               'Completion Date chapter_02',
+                               'Completion Date chapter_03',
+                               'Due Date #1',
+                               'Completion Date chapter_04',
+                               'Completion Date chapter_13',
+                               'Completion Date chapter_14',
+                               'Due Date #2',
+                               'Completion Date chapter_05',
+                               'Completion Date chapter_06',
+                               'Completion Date chapter_07',
+                               'Due Date #3',
+                               'Completion Date chapter_08',
+                               'Completion Date chapter_11',
+                               'Due Date #4',
+                               'Completion Date chapter_09',
+                               'Completion Date chapter_10',
+                               'Completion Date chapter_12',
+                               'Due Date #5',
+                               'Chapter 12 Skills Lab',
+                               'Total Hours Completed',
+                               'Total Hours Outstanding'])
 
-    df.to_excel(writer, sheet_name='Status Update {}'.format(date))
+    df.to_excel(writer, sheet_name='Status Update {}'.format(date), startrow=3)
     workbook = writer.book
     worksheet = writer.sheets['Status Update {}'.format(date)]
+    set_1 = [ '$G1:$N1', '$G2:$N2']
+    set_2 = [ '$O1:$U1', '$O2:$U2']
+    set_3 = [ '$V1:$Y1', '$V2:$Y2']
+    header_format = workbook.add_format({'align': 'center',
+                                         'bold': True,
+                                         'valign': 'center',
+                                         'bg_color': '#F2F4F4',
+                                         'left': 1,
+                                         'right': 1,
+                                         })
+    header_format2 = workbook.add_format({'align': 'center',
+                                         'bold': True,
+                                         'valign': 'center',
+                                         'bg_color': '#F2F4F4',
+                                         })
+
+    worksheet.conditional_format('A1:AA3',{'type': 'blanks',
+                                           'format': header_format2})
+    worksheet.conditional_format('A1:AA3',{'type': 'no_blanks',
+                                           'format': header_format2})
+
+    worksheet.merge_range(set_1[0],f'Set #1 - Opened {start_date}',header_format)
+    worksheet.merge_range(set_2[0],f'Set #2 - Opened {release_2}',header_format)
+    worksheet.merge_range(set_3[0],f'Set #3 - Opened {release_3}', header_format)
+    dates = [start_date, release_2, release_3]
+    status = []
+    for d in dates:
+        if d <= date:
+            status.append('Open')
+        else:
+            status.append('Closed')
+
+    worksheet.merge_range(set_1[1],f'These courses are: {status[0]}',header_format)
+    worksheet.merge_range(set_2[1],f'These courses are: {status[1]}',header_format)
+    worksheet.merge_range(set_3[1],f'These courses are: {status[2]}', header_format)
+
+    worksheet.write('E3', 'Estimated hours to complete:', header_format)
+    worksheet.write('G3', '2.5hr', header_format)
+    worksheet.write('H3', '2hr', header_format)
+    worksheet.write('I3', '2.5hr', header_format)
+    worksheet.write('K3', '4hr', header_format)
+    worksheet.write('L3', '1.5hr', header_format)
+    worksheet.write('M3', '2hr', header_format)
+    worksheet.write('O3', '4hr', header_format)
+    worksheet.write('P3', '1.5hr', header_format)
+    worksheet.write('Q3', '2hr', header_format)
+    worksheet.write('S3', '4hr', header_format)
+    worksheet.write('T3', '3hr', header_format)
+    worksheet.write('V3', '4hr', header_format)
+    worksheet.write('W3', '2.5hr', header_format)
+    worksheet.write('X3', '6hr', header_format)
+    worksheet.write('Z3', '2hr', header_format)
     format = formats(workbook,worksheet)
 
     complete = format.con_complete()
