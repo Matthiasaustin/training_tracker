@@ -130,8 +130,12 @@ def make_report(chapter_list):
                                 'Completion Date {}'.format(record['Chapter']): completion_date}
                         )
 
+    print("******************************\nCourse Start Date: YYYY-MM-DD\n******************************")
+    start_date = datetime.datetime.strptime(input(),'%Y-%m-%d')
+    # start_date= datetime.strptime('2020-9-25', '%Y-%m-%d')
+    start_date = datetime.datetime.date(start_date)
     for s in report:
-        s = chapter_format.hour_checker(s)
+        s = chapter_format.hour_checker(s, start_date)
     return report
 
 def export_data(dict_list):
@@ -155,7 +159,7 @@ def main_program():
     chapter_list = data[1]
     chapter_list = chapter_list.sort()
     final_list = [chapter for chapter in chapters]
-    
+
     report = make_report(chapters)
     final_list.append(report)
 

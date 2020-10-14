@@ -30,11 +30,31 @@ class formats():
         self.complete_format = workbook.add_format({'bg_color': '#90F685'})
 
         self.stale_format = workbook.add_format({'bg_color': '#82E0AA', 'bold': 1})
+        self.closed_format = workbook.add_format({'bg_color': '#F2F4F4', 'font_color': '#F2F4F4','pattern':1})
         self.highlight_format = workbook.add_format({'bold': 1,'bg_color': '#58D68D','border': 6, 'border_color': 'red','align':'center', 'valign':'center'})
 
         self.started_format = workbook.add_format({'bg_color': '#F9E79F'})
         self.incomplete_format = workbook.add_format({'bg_color': '#EDBB99'})
+        self.not_enrolled= workbook.add_format({'bg_color': '#F2F4F4', 'font_color': '#F2F4F2','pattern':1})
         self.location = 'A5:BF100'
+
+
+    def con_closed1(self):
+        return {'type': 'formula',
+                'criteria': '=ISNUMBER(SEARCH("Closed",$O$2)) ',
+                'value': 'Closed',
+                'format': self.closed_format}
+    def con_closed2(self):
+        return {'type': 'formula',
+                'criteria': '=ISNUMBER(SEARCH("Closed",$V$2)) ',
+                'value': 'Closed',
+                'format': self.closed_format}
+
+    def con_notenrolled(self):
+        return {'type': 'text',
+                'criteria': 'containing',
+                'value': 'Not Enrolled',
+                'format': self.not_enrolled}
 
     def con_complete(self):
         return {'type': 'text',
@@ -131,9 +151,9 @@ def report_writer(df):
     worksheet.conditional_format('A1:AA3',{'type': 'no_blanks',
                                            'format': header_format2})
 
-    worksheet.merge_range(set_1[0],f'Set #1 - Opened {start_date}',header_format)
-    worksheet.merge_range(set_2[0],f'Set #2 - Opened {release_2}',header_format)
-    worksheet.merge_range(set_3[0],f'Set #3 - Opened {release_3}', header_format)
+    worksheet.merge_range(set_1[0],f'Set #1 - Opened {start_date.strftime("%m/%d/%Y")}',header_format)
+    worksheet.merge_range(set_2[0],f'Set #2 - Opened {release_2.strftime("%m/%d/%Y")}',header_format)
+    worksheet.merge_range(set_3[0],f'Set #3 - Opened {release_3.strftime("%m/%d/%Y")}', header_format)
     dates = [start_date, release_2, release_3]
     status = []
     for d in dates:
@@ -146,32 +166,47 @@ def report_writer(df):
     worksheet.merge_range(set_2[1],f'These courses are: {status[1]}',header_format)
     worksheet.merge_range(set_3[1],f'These courses are: {status[2]}', header_format)
 
+    duedate1 = release_2
+    duedate2 = release_2 + datetime.timedelta(days=2)
+    duedate3 = release_3
+    duedate4 = release_3 + datetime.timedelta(days=2)
+    duedate5 = release_3 + datetime.timedelta(days=14)
+
+
     worksheet.write('E3', 'Estimated hours to complete:', header_format)
     worksheet.write('G3', '2.5hr', header_format)
     worksheet.write('H3', '2hr', header_format)
     worksheet.write('I3', '2.5hr', header_format)
+    worksheet.write('J3', f'Due Date: {duedate1.strftime("%m/%d/%Y")}', header_format)
     worksheet.write('K3', '4hr', header_format)
     worksheet.write('L3', '1.5hr', header_format)
     worksheet.write('M3', '2hr', header_format)
+    worksheet.write('N3', f'Due Date: {duedate2.strftime("%m/%d/%Y")}', header_format)
     worksheet.write('O3', '4hr', header_format)
     worksheet.write('P3', '1.5hr', header_format)
     worksheet.write('Q3', '2hr', header_format)
+    worksheet.write('R3', f'Due Date: {duedate3.strftime("%m/%d/%Y")}', header_format)
     worksheet.write('S3', '4hr', header_format)
     worksheet.write('T3', '3hr', header_format)
+    worksheet.write('U3', f'Due Date: {duedate4.strftime("%m/%d/%Y")}', header_format)
     worksheet.write('V3', '4hr', header_format)
     worksheet.write('W3', '2.5hr', header_format)
     worksheet.write('X3', '6hr', header_format)
+    worksheet.write('Y3', f'Due Date: {duedate5.strftime("%m/%d/%Y")}', header_format)
     worksheet.write('Z3', '2hr', header_format)
     format = formats(workbook,worksheet)
 
     complete = format.con_complete()
 
+    worksheet.conditional_format("$O5:$U100",format.con_closed1())
+    worksheet.conditional_format("$V5:$Z100",format.con_closed2())
     worksheet.conditional_format(format.location, format.con_blanks())
     worksheet.conditional_format(format.location, format.date())
     worksheet.conditional_format(format.location,format.con_complete())
     worksheet.conditional_format(format.location,format.con_notstarted())
     worksheet.conditional_format(format.location,format.con_started())
     worksheet.conditional_format(format.location,format.stale_date())
+    worksheet.conditional_format(format.location,format.con_notenrolled())
 
 
     writer.save()

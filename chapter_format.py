@@ -2,7 +2,7 @@
 from datetime import datetime, timedelta
 
 
-def hour_checker(student):
+def hour_checker(student, start_date):
     student = student
 
     dd_1= 0
@@ -73,10 +73,11 @@ def hour_checker(student):
     hours_available= 0
     hours_completed =  dd_1 + dd_2 + dd_3 + dd_4 + dd_5
     date = datetime.date(datetime.now())
-    print("Course Start Date: YYYY-MM-DD")
     # start_date = datetime.strptime(input(),'%Y-%m-%d')
-    start_date= datetime.strptime('2020-9-25', '%Y-%m-%d')
-    start_date = datetime.date(start_date)
+    # start_date= datetime.strptime('2020-9-25', '%Y-%m-%d')
+    # start_date = datetime.date(start_date)
+    start_date = start_date
+
     if date > start_date:
         hours_available = hours_available + 13.5
     if date > start_date + timedelta(days=7):
