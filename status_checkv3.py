@@ -17,8 +17,9 @@ def import_data():
     ch_num = []
 
     # The general path to the fold that holds the data
-    PATH = os.path.expanduser("~/*Documents/*code/*training_tracker/*data")
+    # PATH = os.path.expanduser("~/*Documents/*code/*training_tracker/*data")
 
+    PATH = os.path.expanduser("~/*Documents/*!Matthias/*code/*training_reporter/*data")
     # what type of files are read in
     EXT = "*.csv"
 
@@ -111,10 +112,9 @@ def make_report(chapter_list):
                         "Institution": record["Institution"],
                         "ID Number": record["ID number"],
                         # 'Percent {}'.format(record['Chapter']): record['Percent Complete'],
-                        # 'Complete {}'.format(record['Chapter']): complete,
-                        "Chapter": "Report",
-                        "Completion Date {}".format(record["Chapter"]): completion_date,
-                    }
+                        'Complete {}'.format(record['Chapter']): complete,
+                        'Chapter': "Report",
+                        'Completion Date {}'.format(record['Chapter']): completion_date}
                 )
             else:
                 for i in report:
@@ -126,14 +126,13 @@ def make_report(chapter_list):
                                 "Institution": record["Institution"],
                                 "ID Number": record["ID number"],
                                 # 'Percent {}'.format(record['Chapter']): record['Percent Complete'],
-                                # 'Complete {}'.format(record['Chapter']): complete,
-                                "Chapter": "Report",
-                                "Completion Date {}".format(
-                                    record["Chapter"]
-                                ): completion_date,
-                            }
+                                'Complete {}'.format(record['Chapter']): complete,
+                                'Chapter': "Report",
+                                'Completion Date {}'.format(record['Chapter']): completion_date}
                         )
 
+    for s in report:
+        s = chapter_format.hour_checker(s)
     return report
 
 
