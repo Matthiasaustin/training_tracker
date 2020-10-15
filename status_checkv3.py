@@ -11,6 +11,7 @@ import chapter_format
 import datetime
 import update_format
 
+
 def import_data():
     chapters = []
     ch_num = []
@@ -23,7 +24,7 @@ def import_data():
     EXT = "*.csv"
 
     # joins the path to folder to the extension
-    joined = os.path.join(PATH,EXT)
+    joined = os.path.join(PATH, EXT)
 
     # creates a list of specific locations to read from the path and extension
     globbed = glob.glob(joined)
@@ -43,10 +44,10 @@ def import_data():
         new_csv = pandas.read_csv(c)
 
         # fill in any empy cells with "Incomplete"
-        new_csv.fillna('Incomplete', inplace=True)
+        new_csv.fillna("Incomplete", inplace=True)
 
         # converts the datafram to a dictionary
-        new_csv = new_csv.to_dict('records')
+        new_csv = new_csv.to_dict("records")
 
         # adds the chapter number to each dictionary for future reference
         for k in new_csv:
@@ -58,12 +59,12 @@ def import_data():
         # adds chapter number to list of chapters imported
         ch_num.append(ch_number)
 
-
     # returns the list of chapters (each a list of dictionary),
     # and list of chapter numbers for reference
     return_list = [chapters, ch_num]
 
     return return_list
+
 
 def make_report(chapter_list):
 
@@ -86,73 +87,82 @@ def make_report(chapter_list):
             completion_date = "Not Started"
             # the information in k,v for the student in the report list
 
+            name = record["Name"]
 
-            name = record['Name']
-
-            if record['Course complete'] == 'Incomplete':
-                if record['Percent Complete'] >= 1:
+            if record["Course complete"] == "Incomplete":
+                if record["Percent Complete"] >= 1:
                     complete = "Started"
                     completion_date = "Started"
                 else:
                     complete = "Not Started"
                     completion_date = "Not Started"
             else:
-                complete = 'Finished'
-                completion_date = datetime.datetime.strptime(record['Course complete'],
-                                                             '%d/%m/%y, %H:%M')
+                complete = "Finished"
+                completion_date = datetime.datetime.strptime(
+                    record["Course complete"], "%d/%m/%y, %H:%M"
+                )
                 completion_date = completion_date.date()
 
             if name not in names:
                 names[name] = True
                 report.append(
                     {
-                        'Name': record['Name'],
-                        'Department':record['Department'],
-                        'Institution':record['Institution'],
-                    'ID Number': record['ID number'],
+                        "Name": record["Name"],
+                        "Department": record["Department"],
+                        "Institution": record["Institution"],
+                        "ID Number": record["ID number"],
                         # 'Percent {}'.format(record['Chapter']): record['Percent Complete'],
-                        'Complete {}'.format(record['Chapter']): complete,
-                        'Chapter': "Report",
-                        'Completion Date {}'.format(record['Chapter']): completion_date}
+                        "Complete {}".format(record["Chapter"]): complete,
+                        "Chapter": "Report",
+                        "Completion Date {}".format(record["Chapter"]): completion_date,
+                    }
                 )
             else:
                 for i in report:
-                    if i['Name'] == record['Name']:
+                    if i["Name"] == record["Name"]:
                         i.update(
                             {
-                                'Name': record['Name'],
-                            'Department':record['Department'],
-                                'Institution':record['Institution'],
-                                'ID Number': record['ID number'],
+                                "Name": record["Name"],
+                                "Department": record["Department"],
+                                "Institution": record["Institution"],
+                                "ID Number": record["ID number"],
                                 # 'Percent {}'.format(record['Chapter']): record['Percent Complete'],
-                                'Complete {}'.format(record['Chapter']): complete,
-                                'Chapter': "Report",
-                                'Completion Date {}'.format(record['Chapter']): completion_date}
+                                "Complete {}".format(record["Chapter"]): complete,
+                                "Chapter": "Report",
+                                "Completion Date {}".format(
+                                    record["Chapter"]
+                                ): completion_date,
+                            }
                         )
 
-    print("******************************\nCourse Start Date: YYYY-MM-DD\n******************************")
-    start_date = datetime.datetime.strptime(input(),'%Y-%m-%d')
+    print(
+        "******************************\nCourse Start Date: YYYY-MM-DD\n******************************"
+    )
+    start_date = datetime.datetime.strptime(input(), "%Y-%m-%d")
     # start_date= datetime.strptime('2020-9-25', '%Y-%m-%d')
     start_date = datetime.datetime.date(start_date)
     for s in report:
         s = chapter_format.hour_checker(s, start_date)
     return report
 
+
 def export_data(dict_list):
     print("Exporting")
     df_list = []
     date = datetime.datetime.date(datetime.datetime.now())
     for d in dict_list:
-        print(d[0]['Chapter'])
-        chapter = d[0]['Chapter']
+        print(d[0]["Chapter"])
+        chapter = d[0]["Chapter"]
         now = datetime.datetime.now()
         df = pandas.DataFrame(d)
         df_list.append(df)
 
     for df in df_list:
-        if df.loc[2,'Chapter'] =='Report':
-            df.fillna('Not Enrolled', inplace = True)
+        if df.loc[2, "Chapter"] == "Report":
+            df.fillna("Not Enrolled", inplace=True)
             update_format.report_writer(df)
+
+
 def main_program():
     data = import_data()
     chapters = data[0]
@@ -164,7 +174,8 @@ def main_program():
     final_list.append(report)
 
     export_data(final_list)
-    print('Finished')
+    print("Finished")
+
 
 if __name__ == "__main__":
 
