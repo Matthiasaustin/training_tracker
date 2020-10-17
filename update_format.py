@@ -30,6 +30,8 @@ class formats:
         self.complete_format = workbook.add_format({"bg_color": "#90F685"})
 
         self.stale_format = workbook.add_format({"bg_color": "#82E0AA", "bold": 1})
+        self.closed_format = workbook.add_format({'bg_color': '#F2F4F4', 'font_color': '#F2F4F4','pattern':1})
+        self.not_enrolled= workbook.add_format({'bg_color': '#F2F4F4', 'font_color': '#F2F4F2','pattern':1})
         self.highlight_format = workbook.add_format(
             {
                 "bold": 1,
@@ -71,6 +73,14 @@ class formats:
             "value": "Not Enrolled",
             "format": self.not_enrolled,
         }
+        self.complete_format = workbook.add_format({'bg_color': '#90F685'})
+
+        self.stale_format = workbook.add_format({'bg_color': '#82E0AA', 'bold': 1})
+        self.highlight_format = workbook.add_format({'bold': 1,'bg_color': '#58D68D','border': 6, 'border_color': 'red','align':'center', 'valign':'center'})
+
+        self.started_format = workbook.add_format({'bg_color': '#F9E79F'})
+        self.incomplete_format = workbook.add_format({'bg_color': '#EDBB99'})
+        self.location = 'A5:BF100'
 
     def con_complete(self):
         return {
@@ -162,6 +172,7 @@ def report_writer(df):
 
     df.to_excel(writer, sheet_name="Status Update {}".format(date), startrow=3)
     workbook = writer.book
+
     worksheet = writer.sheets["Status Update {}".format(date)]
     set_1 = ["$G1:$N1", "$G2:$N2"]
     set_2 = ["$O1:$U1", "$O2:$U2"]

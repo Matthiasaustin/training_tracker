@@ -141,8 +141,9 @@ def make_report(chapter_list):
     start_date = datetime.datetime.strptime(input(), "%Y-%m-%d")
     # start_date= datetime.strptime('2020-9-25', '%Y-%m-%d')
     start_date = datetime.datetime.date(start_date)
+
     for s in report:
-        s = chapter_format.hour_checker(s, start_date)
+        s = chapter_format.hour_checker(s)
     return report
 
 
