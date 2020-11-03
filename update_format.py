@@ -134,8 +134,11 @@ def df_format(df):
     return df
 
 
-def report_writer(df):
-    print(date)
+def report_writer(df, start_date):
+    start_date = start_date
+    release_2 = start_date + datetime.timedelta(days=7)
+    release_3 = start_date + datetime.timedelta(days=14)
+    print("Todays Date:" + str(date) + "\nCourse Start Date:" + str(start_date))
     # create a writer to save the formatted report with the date to excel
     writer = pd.ExcelWriter(joined, engine="xlsxwriter")
     df = df.reindex(
@@ -169,7 +172,23 @@ def report_writer(df):
             "Total Hours Outstanding",
         ]
     )
-
+    df.rename(columns = {
+            "Chapter": "Report(Y/N)",
+            "Completion Date chapter_01": "Chapter 1",
+            "Completion Date chapter_02": "Chapter 2",
+            "Completion Date chapter_03": "Chapter 3",
+            "Completion Date chapter_04": "Chapter 4",
+            "Completion Date chapter_13": "Chapter 13",
+            "Completion Date chapter_14": "Chapter 14",
+            "Completion Date chapter_05": "Chapter 5",
+            "Completion Date chapter_06": "Chapter 6",
+            "Completion Date chapter_07": "Chapter 7",
+            "Completion Date chapter_08": "Chapter 8",
+            "Completion Date chapter_11": "Chapter 11",
+            "Completion Date chapter_09": "Chapter 9",
+            "Completion Date chapter_10": "Chapter 10",
+            "Completion Date chapter_12": "Chapter 12",
+    }, inplace=True)
     df.to_excel(writer, sheet_name="Status Update {}".format(date), startrow=3)
     workbook = writer.book
 
@@ -185,6 +204,7 @@ def report_writer(df):
             "bg_color": "#F2F4F4",
             "left": 1,
             "right": 1,
+            "top":1,
         }
     )
     header_format2 = workbook.add_format(

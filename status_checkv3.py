@@ -135,22 +135,17 @@ def make_report(chapter_list):
                             }
                         )
 
-    print(
-        "******************************\nCourse Start Date: YYYY-MM-DD\n******************************"
-    )
-    start_date = datetime.datetime.strptime(input(), "%Y-%m-%d")
-    # start_date= datetime.strptime('2020-9-25', '%Y-%m-%d')
-    start_date = datetime.datetime.date(start_date)
 
     for s in report:
         s = chapter_format.hour_checker(s)
     return report
 
 
-def export_data(dict_list):
+def export_data(dict_list, start_date):
     print("Exporting")
     df_list = []
     date = datetime.datetime.date(datetime.datetime.now())
+    start_date = start_date
     for d in dict_list:
         print(d[0]["Chapter"])
         chapter = d[0]["Chapter"]
@@ -161,7 +156,7 @@ def export_data(dict_list):
     for df in df_list:
         if df.loc[2, "Chapter"] == "Report":
             df.fillna("Not Enrolled", inplace=True)
-            update_format.report_writer(df)
+            update_format.report_writer(df, start_date)
 
 
 def main_program():
@@ -173,8 +168,14 @@ def main_program():
 
     report = make_report(chapters)
     final_list.append(report)
+    print(
+        "******************************\nCourse Start Date: YYYY-MM-DD\n******************************"
+    )
+    start_date = datetime.datetime.strptime(input(), "%Y-%m-%d")
+    # start_date= datetime.strptime('2020-9-25', '%Y-%m-%d')
+    start_date = datetime.datetime.date(start_date)
 
-    export_data(final_list)
+    export_data(final_list, start_date)
     print("Finished")
 
 
