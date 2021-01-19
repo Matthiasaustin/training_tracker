@@ -72,7 +72,7 @@ def hour_checker(student):
     hours_available = 0
     hours_completed = dd_1 + dd_2 + dd_3 + dd_4 + dd_5
     date = datetime.date(datetime.now())
-    print("Course Start Date: YYYY-MM-DD")
+    # print("Course Start Date: YYYY-MM-DD")
     # start_date = datetime.strptime(input(),'%Y-%m-%d')
     start_date= datetime.strptime('2020-9-25', '%Y-%m-%d')
     start_date = datetime.date(start_date)

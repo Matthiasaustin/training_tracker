@@ -13,12 +13,12 @@ from pathlib import Path
 
 PATH = os.path.expanduser("~/Documents/!Matthias/code/training_reporter/export")
 date = datetime.datetime.date(datetime.datetime.now())
-start_date = datetime.datetime.date(datetime.datetime.strptime("2020-9-30", "%Y-%m-%d"))
+start_date = datetime.datetime.date(datetime.datetime.strptime("2020-11-4", "%Y-%m-%d"))
 release_2 = start_date + datetime.timedelta(days=7)
 release_3 = start_date + datetime.timedelta(days=14)
 
 joined = os.path.join(PATH, f"status_update_{date}.xlsx")
-print(joined)
+# print(joined)
 joined = Path(joined)
 
 # Formats
@@ -138,7 +138,7 @@ def report_writer(df, start_date):
     start_date = start_date
     release_2 = start_date + datetime.timedelta(days=7)
     release_3 = start_date + datetime.timedelta(days=14)
-    print("Todays Date:" + str(date) + "\nCourse Start Date:" + str(start_date))
+    print("Todays Date: " + str(date) + "\nCourse Start Date: " + str(start_date))
     # create a writer to save the formatted report with the date to excel
     writer = pd.ExcelWriter(joined, engine="xlsxwriter")
     df = df.reindex(

@@ -38,7 +38,7 @@ def import_data():
         # match chapter number and add it to the chapter number list
         ch_number = re.search("chapter_\d\d", c)
         ch_number = ch_number.group()
-        print(ch_number)
+        # print(ch_number)
 
         # read in the csv file as a pandas dataframe
         new_csv = pandas.read_csv(c)
@@ -147,7 +147,7 @@ def export_data(dict_list, start_date):
     date = datetime.datetime.date(datetime.datetime.now())
     start_date = start_date
     for d in dict_list:
-        print(d[0]["Chapter"])
+        # print(d[0]["Chapter"])
         chapter = d[0]["Chapter"]
         now = datetime.datetime.now()
         df = pandas.DataFrame(d)
