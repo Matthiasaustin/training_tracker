@@ -76,7 +76,7 @@ def hour_checker(student):
     # start_date = datetime.strptime(input(),'%Y-%m-%d')
     start_date= datetime.strptime('2020-9-25', '%Y-%m-%d')
     start_date = datetime.date(start_date)
-    if date > start_date:
+    if date > start_date and date < timedelta(days=7):
         hours_available = hours_available + 13.5
     if date > start_date + timedelta(days=7):
         hours_available = hours_available + 14.5
@@ -163,7 +163,7 @@ def clean_data(chapter_list):
         clean_student.update({"Activities Complete": p[0]})
         clean_student.update({"Total Activities": p[1]})
         clean_student.update({"Percent Complete": p[2]})
-
+        # clean_student.update({"Day Since Started": timeelapsed})
         clean_chapter.append(clean_student)
 
     return clean_chapter
