@@ -154,7 +154,7 @@ def clean_data(chapter_list):
 
     for dict in chapter_list:
         clean_student = {}
-        for k, v in dict.items():
+        for k, v in dict.(items)(()):
             if k in chapter_activities:
                 if "Completed" in str(v):
                     v = "Completed"
