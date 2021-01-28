@@ -5,8 +5,8 @@ import pandas as pd
 import os, glob, sys, re
 import datetime
 
-import app.format as format
-import app.report_maker as report_maker
+# import app.format as format
+import report_maker
 
 
 # import
@@ -44,8 +44,9 @@ def import_csvs(path_list):
         chapter_number = chapter_number.group()
 
         # reads the csv file in as a dataframe, fills any missing values with incomplete
-        new_csv = pd.read_csv(file)
+        new_csv = pd.read_csv(file, parse_dates=['Course complete'],dayfirst=True)
         new_csv.fillna('Incomplete', inplace=True)
+        # columns = new_csv.filter(like='Completion date')
 
         # adds column with default of chapter number for the df
         new_csv['Chapter'] = chapter_number

@@ -1,8 +1,9 @@
 import pandas as pd
+import data
 
 # hour_checker
 
-    chapter_hours = {
+chapter_hours = {
         "chapter_01": 2.5,
         "chapter_02": 2,
         "chapter_03": 2.5,
@@ -24,6 +25,25 @@ import pandas as pd
 
 # clean_data
 
-# sort_data
+# parse_data
+def parse_data(list_of_df):
+    new_df_list = []
+    class_records = list_of_df
+    for course in class_records:
+        course['Status'] = 'Not Started'
+        if 
+        new_df = course[['Institution', 'Department', 'Name', 'ID number','Chapter','Course complete']]
+        print(course.iloc[0])
+        new_df_list.append(new_df)
+
+    
+    
+    return new_df_list
+
 
 # write_out
+
+if __name__ == '__main__':
+    csv = data.import_data()
+    x = parse_data(csv)
+
