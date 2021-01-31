@@ -1,4 +1,5 @@
 import pandas as pd
+
 # import csv
 # import xlsxwriter as xl
 import datetime
@@ -30,8 +31,12 @@ class formats:
         self.complete_format = workbook.add_format({"bg_color": "#90F685"})
 
         self.stale_format = workbook.add_format({"bg_color": "#82E0AA", "bold": 1})
-        self.closed_format = workbook.add_format({'bg_color': '#F2F4F4', 'font_color': '#F2F4F4','pattern':1})
-        self.not_enrolled= workbook.add_format({'bg_color': '#F2F4F4', 'font_color': '#F2F4F2','pattern':1})
+        self.closed_format = workbook.add_format(
+            {"bg_color": "#F2F4F4", "font_color": "#F2F4F4", "pattern": 1}
+        )
+        self.not_enrolled = workbook.add_format(
+            {"bg_color": "#F2F4F4", "font_color": "#F2F4F2", "pattern": 1}
+        )
         self.highlight_format = workbook.add_format(
             {
                 "bold": 1,
@@ -73,14 +78,23 @@ class formats:
             "value": "Not Enrolled",
             "format": self.not_enrolled,
         }
-        self.complete_format = workbook.add_format({'bg_color': '#90F685'})
+        self.complete_format = workbook.add_format({"bg_color": "#90F685"})
 
-        self.stale_format = workbook.add_format({'bg_color': '#82E0AA', 'bold': 1})
-        self.highlight_format = workbook.add_format({'bold': 1,'bg_color': '#58D68D','border': 6, 'border_color': 'red','align':'center', 'valign':'center'})
+        self.stale_format = workbook.add_format({"bg_color": "#82E0AA", "bold": 1})
+        self.highlight_format = workbook.add_format(
+            {
+                "bold": 1,
+                "bg_color": "#58D68D",
+                "border": 6,
+                "border_color": "red",
+                "align": "center",
+                "valign": "center",
+            }
+        )
 
-        self.started_format = workbook.add_format({'bg_color': '#F9E79F'})
-        self.incomplete_format = workbook.add_format({'bg_color': '#EDBB99'})
-        self.location = 'A5:BF100'
+        self.started_format = workbook.add_format({"bg_color": "#F9E79F"})
+        self.incomplete_format = workbook.add_format({"bg_color": "#EDBB99"})
+        self.location = "A5:BF100"
 
     def con_complete(self):
         return {
@@ -172,7 +186,8 @@ def report_writer(df, start_date):
             "Total Hours Outstanding",
         ]
     )
-    df.rename(columns = {
+    df.rename(
+        columns={
             "Chapter": "Report(Y/N)",
             "Completion Date chapter_01": "Chapter 1",
             "Completion Date chapter_02": "Chapter 2",
@@ -188,7 +203,9 @@ def report_writer(df, start_date):
             "Completion Date chapter_09": "Chapter 9",
             "Completion Date chapter_10": "Chapter 10",
             "Completion Date chapter_12": "Chapter 12",
-    }, inplace=True)
+        },
+        inplace=True,
+    )
     df.to_excel(writer, sheet_name="Status Update {}".format(date), startrow=3)
     workbook = writer.book
 
@@ -204,7 +221,7 @@ def report_writer(df, start_date):
             "bg_color": "#F2F4F4",
             "left": 1,
             "right": 1,
-            "top":1,
+            "top": 1,
         }
     )
     header_format2 = workbook.add_format(

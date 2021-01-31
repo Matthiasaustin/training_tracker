@@ -16,7 +16,6 @@ def import_data():
     chapters = []
     ch_num = []
 
-
     PATH = os.path.expanduser("~/*Documents/*!Matthias/*code/*training_reporter/*data")
 
     # what type of files are read in
@@ -133,7 +132,6 @@ def make_report(chapter_list):
                                 ): completion_date,
                             }
                         )
-
 
     for s in report:
         s = chapter_format.hour_checker(s)

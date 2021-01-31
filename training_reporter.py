@@ -9,12 +9,14 @@ def main_program():
 
     # Test Area for proof of concept run
     df_list = data.import_data()
-    print(df_list[0])
-    print(df_list[1])
-    print(df_list[2])
-    x = df_list[0].iteritems()
-    for k,v in x:
-        print(f"{k}: {v}")
+    # print(df_list[0])
+    # print(df_list[1])
+    # print(df_list[2])
+    test = df_list[0]
+    test_list = list(test.columns[6:-7])
+    for i in test_list:
+        print(test.loc[:,i])
+
     # *************************************************
 
     # initial prompt and welcome

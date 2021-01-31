@@ -2,14 +2,15 @@ import pandas
 import sys
 import os
 
-def message (df):
+
+def message(df):
 
     df = df[1]
-    name = str(df['first_name'])
-    full_name = str(df['first_name']) + " " + str(df['last_name'])
+    name = str(df["first_name"])
+    full_name = str(df["first_name"]) + " " + str(df["last_name"])
     print(name)
-    email_1 = df['personal_email']
-    email_2 = df['sup_email']
+    email_1 = df["personal_email"]
+    email_2 = df["sup_email"]
     subject = f"VOAWW Training Notification: {full_name} CPR/First Aid Due"
     line_one = f"Hello {name},\n\n"
     line_two = "You're receiving this message because you need to complete a CPR/First Aid course. At the moment we can only offer an online version to meet this requirement. You can find more details below:\n"
@@ -25,26 +26,26 @@ def message (df):
     line_ten = "\n\nPlease reach out with any questions,"
     print(line_nine)
     f = open("cpr_email.txt", "a")
-    f.write ("\n\n\n\n*****\n\n\n\n" +
-             str(email_1) +
-             "\n\n" +
-             str(email_2) +
-             "\n\n" +
-             str( subject ) +
-             "\n\n-----\n\n" +
-             str(line_one)   +
-             str(line_two)    +
-             str(line_three)  +
-             str(line_four)   +
-             str(line_five)   +
-             str(line_six)    +
-             str(line_seven)  +
-             str(line_eight)  +
-             str(line_nine)   +
-             str(line_ten)
+    f.write(
+        "\n\n\n\n*****\n\n\n\n"
+        + str(email_1)
+        + "\n\n"
+        + str(email_2)
+        + "\n\n"
+        + str(subject)
+        + "\n\n-----\n\n"
+        + str(line_one)
+        + str(line_two)
+        + str(line_three)
+        + str(line_four)
+        + str(line_five)
+        + str(line_six)
+        + str(line_seven)
+        + str(line_eight)
+        + str(line_nine)
+        + str(line_ten)
     )
     f.close()
-
 
 
 def make_message(dataframe):
@@ -64,6 +65,7 @@ def make_message(dataframe):
     # show example of first formated message for accept or restart
 
     # create messages as drafts (at least until reliable, then add option for direct send)
+
 
 def main_program():
     csv_file_path = input("What is the path to the csv file you want to use?")
