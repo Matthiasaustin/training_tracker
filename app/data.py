@@ -13,9 +13,10 @@ import datetime
 def import_path():
 
     # PATH = os.path.expanduser("~/*Documents/*!Matthias/*code/*training_reporter/*data")
-    user_path = input("What path to your csv files? Type N for default\n")
-    if user_path == "N" or "n":
-        user_path = "~/Documents/code/training_tracker/data"
+    # user_path = input("What path to your csv files? Type N for default\n")
+    # if user_path == "N" or "n":
+    #     user_path = "~/Documents/code/training_tracker/data"
+    user_path = "~/Documents/code/training_tracker/data"
 
     PATH = os.path.expanduser(user_path)
     # what type of files are read in
@@ -69,6 +70,7 @@ def import_data():
 
 
 # export
+def export(list_df):
 
 
 # db import/export tbd

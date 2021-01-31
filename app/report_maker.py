@@ -29,7 +29,7 @@ chapter_hours = {
 def check_started(course_dataframe, static_headers):
     new_cols = static_headers
     course = course_dataframe
-    activities = list(course.columns[6:-7])
+    activities = list(course.columns[6:-5])
     course["Activities Completed"] = 0
     new_cols.append("Activities Completed")
     completion_dates = []
@@ -42,23 +42,24 @@ def check_started(course_dataframe, static_headers):
         for i, r in course[act].items():
             if r is not pd.NaT:
                 course.loc[int(i),'Activities Completed'] += 1
-        # for i, r in course.iterrows():
-            # print(r)
-            # break
 
     num_activity = len(completion_dates)
-    
-    course_out = course[new_cols]
+
+    course_out = course.loc[:,new_cols]
     rows = len(course_out.index)
+    col = course_out.columns.get_loc("Activities Completed")
     for i in range(0,int(rows)):
-        if course_out.loc[i,"Activities Completed"] >= num_activity-1:
-            course_out.loc[i,'Status'] = 'Complete'
-        elif course_out.loc[i,'Activities Completed'] >= 1:
+        name = course_out.at[i, 'Name']
+        act_comp = int(course_out.at[i,'Activities Completed'])
+        # print"(f{name} has completed {act_comp} out of {num_activity}.)"
+        if course_out.at[i, 'Course complete'] != "Incomplete":
+            course_out.loc[i,'Status'] = course_out.at[i, 'Course complete']
+        elif act_comp >= 1:
             course_out.loc[i,'Status'] = "Started"
         else:
-            course_out['Status'] = "Not Started"
+            course_out.loc[i,'Status'] = "Not Started"
 
-    print(course_out[['Name', 'Chapter', 'Activities Completed', 'Status']])
+    print(course_out[['Name', 'Chapter', 'Activities Completed', 'Status','Course complete']])
 
     return course_out
 
@@ -66,6 +67,8 @@ def check_started(course_dataframe, static_headers):
 def parse_data(list_of_df):
     new_df_list = []
     class_records = list_of_df
+    test = class_records[0]
+
     for course in class_records:
         static_headers = ['ID', 'Name', 'ID number', 'Email address', 'Department', 'Institution','Teacher', 'Manager','Course complete', 'Chapter', 'Month']
         new_df = check_started(course, static_headers)
