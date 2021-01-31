@@ -70,7 +70,5 @@ def import_data():
 
 
 # export
-def export(list_df):
-
-
+# def export(list_df):
 # db import/export tbd

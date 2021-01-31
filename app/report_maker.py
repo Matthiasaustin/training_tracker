@@ -27,39 +27,45 @@ chapter_hours = {
 
 # clean_data
 def check_started(course_dataframe, static_headers):
-    new_cols = static_headers
+
+    new_cols = static_headers  # columns that will definitely go into output
     course = course_dataframe
-    activities = list(course.columns[6:-5])
-    course["Activities Completed"] = 0
-    new_cols.append("Activities Completed")
-    completion_dates = []
+    activities = list(course.columns[6:-5])  # excludes known columns at beginning and end of file
+    course["Activities Completed"] = 0  # sets default value for new col
+    new_cols.append("Activities Completed")  # adds new col to output list
+    completion_dates = []  # empty list to add cols with "completion date" in heading
+    # completion date heading is a filter for activities students can complete
+
     for activity in activities:
         if "Completion date" in activity:
-            course[activity] = pd.to_datetime(course[activity], dayfirst=True, errors='coerce')
-            completion_dates.append(activity)
-            new_cols.append(activity)
-    for act in completion_dates:
-        for i, r in course[act].items():
-            if r is not pd.NaT:
-                course.loc[int(i),'Activities Completed'] += 1
+            # all "completion date" cols have a date if finished. Else NaT (not a date)
 
-    num_activity = len(completion_dates)
+            course[activity] = pd.to_datetime(course[activity], dayfirst=True, errors='coerce')  
 
-    course_out = course.loc[:,new_cols]
-    rows = len(course_out.index)
-    col = course_out.columns.get_loc("Activities Completed")
-    for i in range(0,int(rows)):
-        name = course_out.at[i, 'Name']
-        act_comp = int(course_out.at[i,'Activities Completed'])
-        # print"(f{name} has completed {act_comp} out of {num_activity}.)"
-        if course_out.at[i, 'Course complete'] != "Incomplete":
+            completion_dates.append(activity)  # Add activity title to list
+            new_cols.append(activity)  # Add activity to final course df list *May remove
+    for act in completion_dates:  # for every activity listed, loop through
+        for i, r in course[act].items():  # get index and row for the items w/ activity
+            if r is not pd.NaT:  # if the activity has a date in the row (i.e. student finished)
+                course.loc[int(i),'Activities Completed'] += 1  # increment completion count by 1
+
+    num_activity = len(completion_dates)  # get total number of activities
+
+    course_out = course.loc[:,new_cols]  # create new df with listed columns and all rows
+    rows = len(course_out.index)  # determine total rows to loop over
+    for i in range(0,int(rows)):  # loops over all rows
+        act_comp = int(course_out.at[i,'Activities Completed'])  # how many act completed?
+        comp_percent = int(100 * (act_comp / num_activity))
+        if course_out.at[i, 'Course complete'] != "Incomplete":  # If course is marked complete, will have a date, otherwise noted as "incomplete"
+
             course_out.loc[i,'Status'] = course_out.at[i, 'Course complete']
-        elif act_comp >= 1:
-            course_out.loc[i,'Status'] = "Started"
+        elif act_comp >= 1:  # if they have completed one or more activities they have started the course
+            course_out.loc[i,'Status'] = f"Started({comp_percent}%)"
         else:
             course_out.loc[i,'Status'] = "Not Started"
 
     print(course_out[['Name', 'Chapter', 'Activities Completed', 'Status','Course complete']])
+    print("\n*****\n")
 
     return course_out
 
