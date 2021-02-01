@@ -1,16 +1,31 @@
 </head>
+
 <body>
-<p>Hello {{name}},</p>
-<p>You are receiving this message because your CPR/First Aid certification is due. This message includes the registration link and information you needed to get started with your online CPR/First Aid course. This class will close 2/1/2021. If you will not be able to complete by that time please either reply to this email or let your Program Manager know.</p>
-<p>Also, if you already have a current certificate for Adult CPR/First Aid please feel free to reply to this email with proof as that would exempt you from this course.</p>
-<p>Link: <a href="https://www.redcrosslearningcenter.org/s/ClaimVoucher?voucherid=a7a3o000001ja1I">https://www.redcrosslearningcenter.org/s/ClaimVoucher?voucherid=a7a3o000001ja1I</a> Class Closing Date: 2/1/2021</p>
-<p>Here is a helpful tutorial video that will walk you through the process of registering, logging in an getting started. Video: <a href="https://youtu.be/Y6p6NVo7d4c">https://youtu.be/Y6p6NVo7d4c</a></p>
-<p>Please note these are the steps you'll need to follow:</p>
-<p>Register with link above. Check email for confirmation email with your username and login instructions. Use the "forgot password" prompt at www.redcrosslearningcenter.org to set you password for the first time. Log in to begin working on the course.</p>
-<p>As you complete the course your progress will be saved so it can be completed over multiple sessions. Progress will not be saved for incomplete missions and all progress will be lost if the class is closed before you finish.</p>
-<p>Please reach out with any question,</p>
-<p>Matthias Austin Training Coordinator</p>
-<p>DS Training Team Volunteers of America Western Washington | voaww.org maustin@voaww.org | training@voaww.org</p>
-<p>This e-mail is meant for only the intended recipient, and may be a communication privileged by law. If you received this e-mail in error, any review, use, dissemination, distribution, or copying of this e-mail is strictly prohibited - please notify us immediately of the error and please delete this message from your system. Thank you.</p>
+    <p>Hello {{name}},</p>
+    <p>You are receiving this message because your CPR/First Aid certification is due soon. This message includes the registration link and information you needed to get started with your online CPR/First Aid course. This class will close {{close_date}}.</p>
+    <!-- <p>Also, if you already have a current certificate for Adult CPR/First Aid please feel free to reply to this email with proof as that would exempt you from this course.</p> -->
+    <div style="border: 5px solid red; margin: 5px; padding:10px;">
+        <p>Link: <a href="{{link}}">{{link}}</a><br> Class Closing Date: {{close_date}}</p>
+    </div>
+    <p>Here is a helpful tutorial video that will walk you through the process of registering, logging in an getting started.<br> Video: <a href="https://youtu.be/Y6p6NVo7d4c">https://youtu.be/Y6p6NVo7d4c</a></p>
+
+    <p>Please note these are the steps you'll need to follow:</p>
+    <ol>
+        <li>
+            Register with link above. Check email for confirmation email with your username and login instructions.
+        </li>
+        <li>
+            Use the "forgot password" prompt at www.redcrosslearningcenter.org to set you password for the first time.
+        </li>
+        <li>
+            Log in to begin working on the course.
+        </li>
+    </ol>
+        <p>As you complete the course your progress will be saved so it can be completed over multiple sessions. Progress will not be saved for incomplete missions and all progress will be lost if the class is closed before you finish.</p>
+    <p>Please reach out with any question,</p>
+    <p>Matthias Austin <br>Training Coordinator</p>
+    <p>DS Training Team <br>Volunteers of America Western Washington | voaww.org<br> maustin@voaww.org | training@voaww.org</p>
+    <p style="font-size: .5em;">This e-mail is meant for only the intended recipient, and may be a communication privileged by law. If you received this e-mail in error, any review, use, dissemination, distribution, or copying of this e-mail is strictly prohibited - please notify us immediately of the error and please delete this message from your system. Thank you.</p>
 </body>
+
 </html>
