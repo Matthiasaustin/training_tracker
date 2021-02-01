@@ -105,7 +105,13 @@ def combine_report(df_list):
             if name in report.values and name != None:
                 print(name)
                 # index = report[report['Name' == name]].index.values
-                index = report.get_loc(name)
+                print(report['Name'])
+                print(report.query('Name' == name))
+                print(report.iloc[name].index)
+                print(report.index[report['Name' == name]].to_list())
+                print(report['Name' == name].index)
+                print(report['Name' == name].index.to_list())
+                index = report['Name' == name].index.to_list()
                 report.loc[index, chapter_col] = df.loc[r, chapter_col]
             if name not in report.values:
                 report = report.append(df.loc[r, :])

@@ -3,6 +3,7 @@ import pandas as pd
 import jinja2
 import os
 
+
 def get_message(recipient):
     name = str(recipient['first_name'])
     link = str(recipient['registration_link'])
@@ -11,10 +12,14 @@ def get_message(recipient):
     templateEnv = jinja2.Environment(loader=templateLoader)
     TEMPLATE_FILE = "email.html"
     template = templateEnv.get_template(TEMPLATE_FILE)
-    outputText = template.render(name=name, link=link, close_date=close_date)  # this is where to put args to the template renderer
+    outputText = template.render(name=name,  # Include args for render
+                                 link=link,
+                                 close_date=close_date)
 
     return outputText
 
+
+# Currently windows only, may try to make system agnostic at somepoint
 def make_email(recipient):
     print(recipient[0])
     print(recipient[1])
@@ -23,7 +28,6 @@ def make_email(recipient):
     mail = outlook.CreateItem(0)
     email = str(recipient['personal_email'])
     supervisor_email = str(recipient['sup_email'])
-
 
     mail.To = email
     mail.CC = supervisor_email
@@ -35,15 +39,17 @@ def make_email(recipient):
 
     mail.Save()
 
+
 # import_address
 def import_info():
     PATH = os.path.abspath('../email_data')
     csv_name = 'cpr20210201.csv'
-    PATH = os.path.join(PATH,csv_name)
+    PATH = os.path.join(PATH, csv_name)
     print(PATH)
     recipients = pd.read_csv(PATH)
     for row in recipients.iterrows():
         make_email(row)
+
 
 if __name__ == "__main__":
     import_info()
