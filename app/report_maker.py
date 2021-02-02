@@ -97,34 +97,31 @@ def combine_report(df_list):
         chapter_col = chapters[ch_in]
         df[chapter_col] = df.loc[:, 'Status']
         rows = len(df.index)
-        for r in range(0, rows):
-            name = df.loc[r,"Name"]
+        for r in df.iterrows():
+            df = r[1]
+            name = df['Name']
             print(name)
             if name in df.values:
                 print(True)
             if name in report.values and name != None:
                 print(name)
-                # index = report[report['Name' == name]].index.values
-                print(report['Name'])
-                print(report.query('Name' == name))
-                print(report.iloc[name].index)
-                print(report.index[report['Name' == name]].to_list())
-                print(report['Name' == name].index)
-                print(report['Name' == name].index.to_list())
-                index = report['Name' == name].index.to_list()
-                report.loc[index, chapter_col] = df.loc[r, chapter_col]
+                index = report[report['Name'] == name].index.to_list()
+                print(index)
+                report.loc[index, chapter_col] = df.loc[chapter_col]
             if name not in report.values:
-                report = report.append(df.loc[r, :])
+                report = report.append(df)
 
+    report.fillna(value="Not Enrolled", inplace=True)
     print(report)
-
+    print(report.loc[1, :])
+    print(report.loc[0, :])
 
 def parse_data(list_of_df):
     new_df_list = []
     class_records = list_of_df
     for course in class_records:
 
-        static_headers = ['ID', 'Name', 'ID number', 'Email address', 'Department', 'Institution','Teacher', 'Manager','Course complete', 'Chapter', 'Month']
+        static_headers = ['ID', 'Name', 'ID number', 'Email address', 'Department', 'Institution','Course complete', 'Chapter', 'Month']
         new_df = check_started(course, static_headers)
         new_df_list.append(new_df)
 
