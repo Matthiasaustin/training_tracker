@@ -6,7 +6,7 @@ import os, glob, sys, re
 import datetime
 import webbrowser
 import urllib as url
-import requests
+# import requests
 import shutil
 
 data_dir = os.path.abspath("../data")
@@ -16,7 +16,7 @@ downloads = os.path.join(download_dir,'completion-*')
 # import app.format as format
 # import report_maker
 def get_csv():
-    PATH = "~/Documents/code/training_tracker/course_id.csv"
+    PATH = "../course_id.csv"
     course_id_df = pd.read_csv(PATH,)
     course_ids = course_id_df.loc[:,'id']
     # url.request.urlretrieve(csv_url, data_dir+"test.csv")
@@ -40,7 +40,7 @@ def import_path():
     # user_path = input("What path to your csv files? Type N for default\n")
     # if user_path == "N" or "n":
     #     user_path = "~/Documents/code/training_tracker/data"
-    user_path = "~/Documents/code/training_tracker/data"
+    user_path = "../data/"
 
     PATH = os.path.expanduser(user_path)
     # what type of files are read in
