@@ -25,12 +25,12 @@ def get_csv():
         course_id = str(v)
         csv_url = f"https://dstrainings.com/report/completion/index.php?course={course_id}&format=csv"
         print(csv_url)
-        # webbrowser.open(csv_url, autoraise=False)
+        webbrowser.open(csv_url, autoraise=False)
 
     files = glob.glob(downloads)
 
-    for file in files:
-        shutil.move(file,data_dir)
+    # for file in files:
+    #     shutil.move(file,data_dir)
 
 # https://dstrainings.com/report/completion/index.php?course={course_id}&format=csv
 # import
@@ -91,8 +91,8 @@ def import_csvs(path_list):
 
 def import_data():
     get_csv()
-    path_list = import_path()
-    dataframes = import_csvs(path_list)
+    # path_list = import_path()
+    # dataframes = import_csvs(path_list)
 
     return dataframes
 
