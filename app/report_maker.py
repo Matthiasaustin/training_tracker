@@ -111,10 +111,6 @@ def combine_report(df_list):
                 report = report.append(df)
 
     report.fillna(value="Not Enrolled", inplace=True)
-    print(report)
-    print(report.loc[1, :])
-    print(report.loc[0, :])
-    return report
 
     return report
 
@@ -126,25 +122,27 @@ def parse_data(list_of_df):
         static_headers = ['ID', 'Name', 'ID number', 'Email address', 'Department', 'Institution','Course complete', 'Chapter', 'Month']
         new_df = check_started(course, static_headers)
         new_df_list.append(new_df)
-    print(len(new_df_list)
-    course_report = combine_report(new_df_list)
-    course_reports = []
-    sola_report = pd.DataFrame
-    voa_report = pd.DataFrame
-    for row in course_report.iterrows():
-        row = row[1]
-        if row['Institution'] == 'SOLA':
-            sola_report.append(row)
-        if row['Institution'] == 'VOAWW':
-            voa_report.append(row)
-    course_reports = [sola_report, voa_report]
-    print(sola_report)
-    print(voa_report)
+
+    course_reports = combine_report(new_df_list)
+    # course_reports = []
+    # sola_report = pd.DataFrame
+    # voa_report = pd.DataFrame
+    # for row in course_report.iterrows():
+    #     row = row[1]
+    #     if row['Institution'] == 'SOLA':
+    #         sola_report.append(row)
+    #     if row['Institution'] == 'VOAWW':
+    #         voa_report.append(row)
+    # course_reports = [sola_report, voa_report]
+    # print(sola_report)
+    # print(voa_report)
     return course_reports
 
 def main():
     csv = data.import_data()
     x = parse_data(csv)
+    print(x)
+    data.export_as_csv(x)
 # write_out
 
 if __name__ == '__main__':

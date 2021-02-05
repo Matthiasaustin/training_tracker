@@ -13,6 +13,7 @@ data_dir = os.path.abspath("../data")
 export_dir = os.path.abspath("../export")
 download_dir = os.path.abspath("/home/matthias/Downloads")
 downloads = os.path.join(download_dir,'completion-*')
+today = datetime.datetime.date(datetime.datetime.now())
 
 # import app.format as format
 # import report_maker
@@ -26,7 +27,7 @@ def get_csv():
         course_id = str(v)
         csv_url = f"https://dstrainings.com/report/completion/index.php?course={course_id}&format=csv"
         print(csv_url)
-        webbrowser.open(csv_url, autoraise=False)
+        # webbrowser.open(csv_url, autoraise=False)
 
     files = glob.glob(downloads)
 
@@ -92,8 +93,8 @@ def import_csvs(path_list):
 
 def import_data():
     get_csv()
-    # path_list = import_path()
-    # dataframes = import_csvs(path_list)
+    path_list = import_path()
+    dataframes = import_csvs(path_list)
 
     return dataframes
 
@@ -102,12 +103,33 @@ def clean_up():
 # export
 def export_as_csv(df):
     df = df
-    dt = datetime.datetime.now()
-    filename = f"status_update_{dt}"
-    df.to_csv(export_dir, index=false)
+    print(df)
+    dt = datetime.datetime.date(datetime.datetime.now())
+    dt = datetime.datetime.strftime(dt,'%Y-%m-%d')
+    print(dt)
+    filename = f"status_update_{dt}.csv"
+    export = os.path.join(export_dir, filename)
+    print(export)
+    df.to_csv(export, index=False)
 
+
+def export_to_excel(df):
+    df = df
+
+    start_date = start_date  # TODO Add start dates to csv for lookup based on cohort month
+    release_2 = start_date + datetime.timedelta(days=7)
+    release_3 = start_date + datetime.timedelta(days=14)
+    writer = pd.ExcelWriter(joined, engine="xlsxwriter")
+
+    month = df['Month']
+    today = datetime.datetime.strftime(today, '%B%d-%Y')
+    df.to_excel(writer, sheet_name=f"{month} Update ({today})",startrow=3)
+    workbook = writer.book
+
+    voaww_worksheet = workbook.add_worksheet("{month} Update {today} VOA")
+    sola_worksheet = workbook.add_worksheet("{month} Update {today} SOLA")
 
 # def export(list_df):
 # db import/export tbd
 if __name__ == "__main__":
-    import_data()
+
