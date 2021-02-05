@@ -1,4 +1,5 @@
 import pandas as pd
+import cProfile
 import numpy as np
 import data
 from datetime import datetime
@@ -79,6 +80,7 @@ def combine_report(df_list):
     df_list = df_list
     report = pd.DataFrame
     report = df_list[0].loc[:, :]
+    # report = df_list[0].loc[:, :]
     chapters = {'chapter_01': "Chapter 1",
                 'chapter_02': "Chapter 2",
                 'chapter_03': "Chapter 3",
@@ -114,6 +116,8 @@ def combine_report(df_list):
     print(report.loc[0, :])
     return report
 
+    return report
+
 def parse_data(list_of_df):
     new_df_list = []
     class_records = list_of_df
@@ -122,16 +126,27 @@ def parse_data(list_of_df):
         static_headers = ['ID', 'Name', 'ID number', 'Email address', 'Department', 'Institution','Course complete', 'Chapter', 'Month']
         new_df = check_started(course, static_headers)
         new_df_list.append(new_df)
+    print(len(new_df_list)
+    course_report = combine_report(new_df_list)
+    course_reports = []
+    sola_report = pd.DataFrame
+    voa_report = pd.DataFrame
+    for row in course_report.iterrows():
+        row = row[1]
+        if row['Institution'] == 'SOLA':
+            sola_report.append(row)
+        if row['Institution'] == 'VOAWW':
+            voa_report.append(row)
+    course_reports = [sola_report, voa_report]
+    print(sola_report)
+    print(voa_report)
+    return course_reports
 
-    new_df_list = combine_report(new_df_list)
-
-    return new_df_list
-
-
+def main():
+    csv = data.import_data()
+    x = parse_data(csv)
 # write_out
 
 if __name__ == '__main__':
-    csv = data.import_data()
-    x = parse_data(csv)
-    data.export_as_csv(x)
-
+    # cProfile.run('main()')
+    main()

@@ -6,7 +6,7 @@ import os, glob, sys, re
 import datetime
 import webbrowser
 import urllib as url
-import requests
+# import requests
 import shutil
 
 data_dir = os.path.abspath("../data")
@@ -17,7 +17,7 @@ downloads = os.path.join(download_dir,'completion-*')
 # import app.format as format
 # import report_maker
 def get_csv():
-    PATH = "~/Documents/code/training_tracker/course_id.csv"
+    PATH = "../course_id.csv"
     course_id_df = pd.read_csv(PATH,)
     course_ids = course_id_df.loc[:,'id']
     # url.request.urlretrieve(csv_url, data_dir+"test.csv")
@@ -26,12 +26,12 @@ def get_csv():
         course_id = str(v)
         csv_url = f"https://dstrainings.com/report/completion/index.php?course={course_id}&format=csv"
         print(csv_url)
-        # webbrowser.open(csv_url, autoraise=False)
+        webbrowser.open(csv_url, autoraise=False)
 
     files = glob.glob(downloads)
 
-    for file in files:
-        shutil.move(file,data_dir)
+    # for file in files:
+    #     shutil.move(file,data_dir)
 
 # https://dstrainings.com/report/completion/index.php?course={course_id}&format=csv
 # import
@@ -41,7 +41,7 @@ def import_path():
     # user_path = input("What path to your csv files? Type N for default\n")
     # if user_path == "N" or "n":
     #     user_path = "~/Documents/code/training_tracker/data"
-    user_path = "~/Documents/code/training_tracker/data"
+    user_path = "../data/"
 
     PATH = os.path.expanduser(user_path)
     # what type of files are read in
@@ -92,8 +92,8 @@ def import_csvs(path_list):
 
 def import_data():
     get_csv()
-    path_list = import_path()
-    dataframes = import_csvs(path_list)
+    # path_list = import_path()
+    # dataframes = import_csvs(path_list)
 
     return dataframes
 
