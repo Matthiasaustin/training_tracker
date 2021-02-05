@@ -7,3 +7,8 @@
 __pycache__
 /export/*.csv
 /export/
+/tree.rtf
+/tree.txt
+/env/
+/email_data/send_info/*.csv
+/email_data/attachments/

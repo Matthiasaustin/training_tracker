@@ -21,6 +21,12 @@ def main_program():
     # prompt for more tasks or exit (on loop)
 
 
+    # *************************************************
+    # get_csv
+
+    # for loop to move by month
+    # run, format and export each, maybe combine
+
 if __name__ == "__main__":
 
     print("Welcome to Trainer Hub['working title']")

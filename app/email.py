@@ -2,6 +2,7 @@ import win32com.client as win32
 import pandas as pd
 import jinja2
 import os
+import glob
 
 
 def get_message(recipient, message_type):
@@ -44,7 +45,7 @@ def make_email(recipient, subject, message_type):
     outlook = win32.Dispatch('outlook.application')
     mail = outlook.CreateItem(0)
     print(message_type)
-    if message_type is "cpr":
+    if message_type == "cpr":
         print('borked')
         email = str(recipient['personal_email'])
         supervisor_email = str(recipient['sup_email'])
@@ -68,14 +69,23 @@ def make_email(recipient, subject, message_type):
 
 # import_address
 def import_info():
+
     PATH = os.path.abspath('../email_data/send_info/')
     csv_name = 'feb_new_user_import.csv'
+    joined = os.path.join(PATH,"*.csv")
+    files = glob.glob(joined)
+    # print(files)
+    for f in files:
+        print(f)
+
+    csv_name= input("What file to use? - Use the full name after the last \\ \n")
     PATH = os.path.join(PATH, csv_name)
     print(PATH)
+    message_type = input("40hr or cpr?\n")
     recipients = pd.read_csv(PATH)
-    subject = input("What is the message subject?")
+    subject = input("What is the message subject?\n")
     for row in recipients.iterrows():
-        make_email(row, subject, '40hr')
+        make_email(row, subject, message_type)
 
 
 if __name__ == "__main__":
