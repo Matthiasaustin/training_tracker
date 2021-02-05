@@ -13,6 +13,7 @@ data_dir = os.path.abspath("../data")
 export_dir = os.path.abspath("../export")
 download_dir = os.path.abspath("/home/matthias/Downloads")
 downloads = os.path.join(download_dir,'completion-*')
+
 # import app.format as format
 # import report_maker
 def get_csv():
@@ -99,6 +100,13 @@ def import_data():
 def clean_up():
     """Resets the data folder and archives files currently within prior to next run"""
 # export
+def export_as_csv(df):
+    df = df
+    dt = datetime.datetime.now()
+    filename = f"status_update_{dt}"
+    df.to_csv(export_dir, index=false)
+
+
 # def export(list_df):
 # db import/export tbd
 if __name__ == "__main__":
