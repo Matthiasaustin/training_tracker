@@ -7,7 +7,9 @@ from datetime import datetime
 
 static_headers = ['ID', 'Name', 'ID number', 'Email address', 'Department', 'Institution','Teacher', 'Manager','Course complete', 'Chapter', 'Month']
 
-chapter_hours = {
+def get_hours(ch_num):
+# chapter_hours =
+    return {
         "chapter_01": 2.5,
         "chapter_02": 2,
         "chapter_03": 2.5,
@@ -22,7 +24,7 @@ chapter_hours = {
         "chapter_12": 6,
         "chapter_13": 1.5,
         "chapter_14": 2,
-    }
+    }.get(ch_num, 2)
 
 # percent_check
 
@@ -100,13 +102,8 @@ def combine_report(df_list):
         for r in df.iterrows():
             df = r[1]
             name = df['Name']
-            print(name)
-            if name in df.values:
-                print(True)
             if name in report.values and name != None:
-                print(name)
                 index = report[report['Name'] == name].index.to_list()
-                print(index)
                 report.loc[index, chapter_col] = df.loc[chapter_col]
             if name not in report.values:
                 report = report.append(df)
@@ -115,6 +112,7 @@ def combine_report(df_list):
     print(report)
     print(report.loc[1, :])
     print(report.loc[0, :])
+    return report
 
 def parse_data(list_of_df):
     new_df_list = []
@@ -135,3 +133,5 @@ def parse_data(list_of_df):
 if __name__ == '__main__':
     csv = data.import_data()
     x = parse_data(csv)
+    data.export_as_csv(x)
+
