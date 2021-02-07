@@ -123,26 +123,24 @@ def parse_data(list_of_df):
         new_df = check_started(course, static_headers)
         new_df_list.append(new_df)
 
-    course_reports = combine_report(new_df_list)
-    # course_reports = []
-    # sola_report = pd.DataFrame
-    # voa_report = pd.DataFrame
-    # for row in course_report.iterrows():
-    #     row = row[1]
-    #     if row['Institution'] == 'SOLA':
-    #         sola_report.append(row)
-    #     if row['Institution'] == 'VOAWW':
-    #         voa_report.append(row)
-    # course_reports = [sola_report, voa_report]
-    # print(sola_report)
-    # print(voa_report)
+    course_report = combine_report(new_df_list)
+    course_reports = []
+    sola_report = pd.DataFrame()
+    voa_report = pd.DataFrame()
+    for row in course_report.iterrows():
+        row = row[1]
+        if row['Institution'] == 'SOLA':
+            sola_report = sola_report.append(row, ignore_index=True)
+        if row['Institution'] == 'VOAWW':
+            voa_report = voa_report.append(row, ignore_index=True)
+    course_reports = [sola_report, voa_report]
     return course_reports
 
 def main():
     csv = data.import_data()
     x = parse_data(csv)
-    print(x)
-    data.export_as_csv(x)
+    # data.export_as_csv(x)
+    data.export_to_excel(x)
 # write_out
 
 if __name__ == '__main__':

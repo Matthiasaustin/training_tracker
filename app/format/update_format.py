@@ -140,12 +140,12 @@ class formats:
         }
 
 
-def dict_format(dictionary):
-    return dictionary
+# def dict_format(dictionary):
+#     return dictionary
 
 
-def df_format(df):
-    return df
+# def df_format(df):
+#     return df
 
 
 def report_writer(df, start_date):
