@@ -4,6 +4,13 @@ import jinja2
 import os
 import glob
 
+class message():
+    
+def cpr_start_email():
+
+def fhr_start_email():
+
+def fhr_reminder_email():
 
 def get_message(recipient, message_type):
     message_type = message_type
