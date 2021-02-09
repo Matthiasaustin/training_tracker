@@ -3,6 +3,7 @@ import pandas as pd
 import jinja2
 import os
 import glob
+from datetime import datetime
 
 class Message():
     def __init__(self, df_row):
@@ -23,10 +24,16 @@ class Message():
         self.link = str(recipient['registration_link'])
         self.close_date = str(recipient['closing_date'])
         self.template_file = 'cpr_email.html'
+        date = datetime.now()
+        date = date.strftime("%m/%d/%Y")
+        self.subject = f"CPR/First Aid Required - {date}"
         template = templateEnv.get_template(template_file)
-        outputText = template.render(self.name=name,  # Include args for render
-                                     self.link=link,
-                                     self.close_date=close_date)
+        name = self.name
+        link = self.link
+        close_date = self.close_date
+        outputText = template.render(name=name,  # Include args for render
+                                     link=link,
+                                     close_date=close_date)
 
     def fhr_start_email():
         self.email = str(recipient['email'])
@@ -35,20 +42,28 @@ class Message():
         self.template_file = 'welcome_40hr.html'
         self.name = str(recipient['firstname'])
         self.month = "February"
+        self.subject = f"Welcome to the {month} 40hr Core"
         self.username = str(recipient['username'])
         self.password = str(recipient['password'])
         self.template = templateEnv.get_template(template_file)
-        self.outputText = template.render(self.name=name,  # Include args for render
-                                     self.month=month,
-                                     self.username=username,
-                                     self.password=password)
+        name = self.name
+        month = self.month
+        username = self.username
+        password = self.password
+        self.outputText = template.render(name=name,  # Include args for render
+                                          month=month,
+                                          username=username,
+                                          password=password)
 
     def fhr_reminder_email():
         fhr_start_email()
+        date = datetime.now()
+        date = date.strftime("%m/%d/%Y")
+        self.subject = f"Training Reminder/Update - {date}"
         self.template_file = 'reminder_40hr.html'
         self.template = templateEnv.get_template(template_file)
-        self.outputText = template.render(self.name=name,  # Include args for render
-                                     self.month=month)
+        self.outputText = template.render(name=name,  # Include args for render
+                                          month=month)
     def get_body():
         return self.outputText
 
@@ -101,7 +116,14 @@ def import_info():
     csv_name= input("What file to use? - Use the full name after the last \\ \n")
     PATH = os.path.join(PATH, csv_name)
     print(PATH)
-    message_type = input("40hr or cpr?\n")
+    default_input_message = """
+    Which would message?\n
+    cpr\n
+    fwelcome (40hr Welcome message)\n
+    freminder (40hr Reminder message)\n
+    """
+
+    message_type = input(default_input_message)
     recipients = pd.read_csv(PATH)
     subject = input("What is the message subject?\n")
     for row in recipients.iterrows():
