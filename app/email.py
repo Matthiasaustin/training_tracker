@@ -4,71 +4,84 @@ import jinja2
 import os
 import glob
 
-class message():
-    
-def cpr_start_email():
+class Message():
+    def __init__(self, df_row):
+        recipient = df_row[0]
+        self.name = ""
+        self.message_type = ""
+        self.template = ""
+        self.outputText = "None has been specified. Please run a constructor"
 
-def fhr_start_email():
+        templateLoader = jinja2.FileSystemLoader(searchpath="../email_data/templates")
+        templateEnv = jinja2.Environment(loader=templateLoader)
 
-def fhr_reminder_email():
+    def cpr_start_email():
+        self.email = str(recipient['personal_email'])
+        self.supervisor_email = str(recipient['sup_email'])
+        self.attachement = None
+        self.name = str(recipient['first_name'])
+        self.link = str(recipient['registration_link'])
+        self.close_date = str(recipient['closing_date'])
+        self.template_file = 'cpr_email.html'
+        template = templateEnv.get_template(template_file)
+        outputText = template.render(self.name=name,  # Include args for render
+                                     self.link=link,
+                                     self.close_date=close_date)
+
+    def fhr_start_email():
+        self.email = str(recipient['email'])
+        self.supervisor_email = str(recipient['profile_field_supervisor_email'])
+        self.attachment = PATH = os.path.abspath("../email_data/attachments/feb_2021_syllabus.pdf")
+        self.template_file = 'welcome_40hr.html'
+        self.name = str(recipient['firstname'])
+        self.month = "February"
+        self.username = str(recipient['username'])
+        self.password = str(recipient['password'])
+        self.template = templateEnv.get_template(template_file)
+        self.outputText = template.render(self.name=name,  # Include args for render
+                                     self.month=month,
+                                     self.username=username,
+                                     self.password=password)
+
+    def fhr_reminder_email():
+        fhr_start_email()
+        self.template_file = 'reminder_40hr.html'
+        self.template = templateEnv.get_template(template_file)
+        self.outputText = template.render(self.name=name,  # Include args for render
+                                     self.month=month)
+    def get_body():
+        return self.outputText
+
 
 def get_message(recipient, message_type):
     message_type = message_type
     templateLoader = jinja2.FileSystemLoader(searchpath="../email_data/templates")
     templateEnv = jinja2.Environment(loader=templateLoader)
-    if message_type == 'cpr':
-        name = str(recipient['first_name'])
-        link = str(recipient['registration_link'])
-        close_date = str(recipient['closing_date'])
-        TEMPLATE_FILE = 'cpr_email.html'
-        
-        template = templateEnv.get_template(TEMPLATE_FILE)
-        outputText = template.render(name=name,  # Include args for render
-                                     link=link,
-                                     close_date=close_date)
-    if message_type == '40hr':
-        TEMPLATE_FILE = 'welcome_40hr.html'
-        name = str(recipient['firstname'])
-        month = "February"
-        username = str(recipient['username'])
-        password = str(recipient['password'])
-        template = templateEnv.get_template(TEMPLATE_FILE)
-        outputText = template.render(name=name,  # Include args for render
-                                     month=month,
-                                     username=username,
-                                     password=password)
-
-    return outputText
 
 
 # Currently windows only, may try to make system agnostic at somepoint
 def make_email(recipient, subject, message_type):
-    print(recipient[0])
-    print(recipient[1])
-    attachment = None
     subject = subject
     message_type = message_type
-    recipient = recipient[1]
+    message = Message(recipient[1])
     outlook = win32.Dispatch('outlook.application')
     mail = outlook.CreateItem(0)
-    print(message_type)
-    if message_type == "cpr":
-        print('borked')
-        email = str(recipient['personal_email'])
-        supervisor_email = str(recipient['sup_email'])
-    elif message_type == '40hr':
-        email = str(recipient['email'])
-        supervisor_email = str(recipient['profile_field_supervisor_email'])
-        attachment = PATH = os.path.abspath("../email_data/attachments/feb_2021_syllabus.pdf")
 
-    mail.To = email
-    mail.CC = supervisor_email
-    text = get_message(recipient, message_type)
+    if message_type == 'cpr':
+        message.cpr_start_email()
+    elif message_type == 'fstart':
+        message.fhr_start_email()
+    elif message_type == 'freminder':
+        message.fhr_reminder_email()
+
+    mail.To = message.email
+    mail.CC = message.supervisor_email
+    text = message.get_body()
     subject = str(subject)
 
     mail.Subject = subject
-    if attachment != None:
-        mail.Attachments.Add(Source=attachment)
+    if message.attachment != None:
+        mail.Attachments.Add(Source=message.attachment)
     mail.HtmlBody = text
 
     mail.Save()
