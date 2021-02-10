@@ -35,7 +35,7 @@ def get_csv():
         course_id = str(v)
         csv_url = f"https://dstrainings.com/report/completion/index.php?course={course_id}&format=csv"
         # print(csv_url)
-        # webbrowser.open(csv_url, autoraise=False)
+        webbrowser.open(csv_url, autoraise=False)
 
     files = glob.glob(downloads)
 
@@ -277,8 +277,10 @@ def export_to_excel(df_list):
 # db import/export tbd
 if __name__ == "__main__":
 
-    month = 'january'
-    PATH = "../course_start_dates.csv"
-    course_dates= pd.read_csv(PATH)
-    start_date = course_dates.loc[course_dates['cohort_month']==month,'start_date']
-    print(datetime.datetime.strptime(str(start_date.item()),'%Y-%m-%d'))
+    # month = 'january'
+    # PATH = "../course_start_dates.csv"
+    # course_dates= pd.read_csv(PATH)
+    # start_date = course_dates.loc[course_dates['cohort_month']==month,'start_date']
+    # print(datetime.datetime.strptime(str(start_date.item()),'%Y-%m-%d'))
+
+    get_csv()
