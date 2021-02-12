@@ -17,6 +17,7 @@ download_dir = os.path.abspath("/home/matthias/Downloads")
 downloads = os.path.join(download_dir,'completion-*')
 today = datetime.datetime.date(datetime.datetime.now())
 
+
 def make_date(one_date):
     # one_date = str(one_date)
     # one_date = datetime.datetime.strptime(one_date,'%Y-%m-%d')
@@ -35,7 +36,7 @@ def get_csv():
         course_id = str(v)
         csv_url = f"https://dstrainings.com/report/completion/index.php?course={course_id}&format=csv"
         # print(csv_url)
-        webbrowser.open(csv_url, autoraise=False)
+        # webbrowser.open(csv_url, autoraise=False)
 
     files = glob.glob(downloads)
 
@@ -113,19 +114,25 @@ def export_as_csv(df):
     df_list = df
     dt = datetime.datetime.date(datetime.datetime.now())
     dt = datetime.datetime.strftime(dt,'%Y-%m-%d')
-    for d in df_list:
-        institution = d.loc[0,"Institution"]
-        institution = institution.lower()
-        filename = f"{institution}_status_update_{dt}.csv"
-        export = os.path.join(export_dir, filename)
-        d.to_csv(export, index=False)
+    for d in df_list[1:]:
+        print(d)
+        if d['Instution'] != None :
+            try:
+                institution = d.loc[0,"Institution"]
+                institution = institution.lower()
+                filename = f"{institution}_status_update_{dt}.csv"
+                export = os.path.join(export_dir, filename)
+                d.to_csv(export, index=False)
+            except:
+                print("Something is wrong in export_as_csv w/ Range")
 
 
 def export_to_excel(df_list):
     df_list = df_list
 
+    print(df_list[1].loc[:,'Month'])
     # Gets month from course report and looks up recorded start date
-    month = df_list[0].loc[0,'Month']
+    month = df_list[1].loc[0,'Month']
     date = datetime.datetime.date(datetime.datetime.now())
     today = datetime.datetime.strftime(date, '%B%d-%Y')
     PATH = "../course_start_dates.csv"
@@ -143,7 +150,6 @@ def export_to_excel(df_list):
     for df in df_list:
         n_df = prep_df(df)
         prepped_df.append(n_df)
-    export_as_csv(prepped_df)
     # creates writer for pd and xlswriter
     writer = pd.ExcelWriter(f"../export/{month}_status_update_{date}.xlsx",
                             engine="xlsxwriter")
@@ -276,11 +282,4 @@ def export_to_excel(df_list):
 # def export(list_df):
 # db import/export tbd
 if __name__ == "__main__":
-
-    # month = 'january'
-    # PATH = "../course_start_dates.csv"
-    # course_dates= pd.read_csv(PATH)
-    # start_date = course_dates.loc[course_dates['cohort_month']==month,'start_date']
-    # print(datetime.datetime.strptime(str(start_date.item()),'%Y-%m-%d'))
-
-    get_csv()
+    print("")

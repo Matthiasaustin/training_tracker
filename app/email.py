@@ -3,7 +3,7 @@ import pandas as pd
 import jinja2
 import os
 import glob
-from datetime import datetime
+from datetime import datetime, timedelta
 
 class Message():
 
@@ -61,19 +61,33 @@ class Message():
                                           password=password)
 
     def fhr_reminder_email(self):
-        fhr_start_email()
+        update_df = pd.read_csv("../export/feb_status_update_2021-02-10.csv")
+        update_info = update_df.loc[update_df["ID Number"] == self.recipient['idnumber']]
+        self.fhr_start_email()
+        start_date = datetime.date(datetime.strptime(self.recipient['hire_date'], "%Y-%m-%d"))
+        days_left = (start_date + timedelta(days=120)) - datetime.now().date()
+        days_left = days_left.days
         date = datetime.now()
         date = date.strftime("%m/%d/%Y")
         self.subject = f"Training Reminder/Update - {date}"
         self.template_file = 'reminder_40hr.html'
+        update_info = update_info.to_html()
         templateLoader = jinja2.FileSystemLoader(searchpath="../email_data/templates")
         templateEnv = jinja2.Environment(loader=templateLoader)
+        name = self.name
+        month = self.month
+        update_info = ""
+
         self.template = templateEnv.get_template(self.template_file)
-        self.outputText = template.render(name=name,  # Include args for render
-                                          month=month)
+        self.outputText = self.template.render(name=name,  # Include args for render
+                                               month=month,
+                                               days_left=days_left,
+                                               update_info=update_info)
     def get_body(self):
         return self.outputText
 
+def get_update_info():
+    """Temporary function til robust version incorporated"""
 
 # Currently windows only, may try to make system agnostic at somepoint
 def make_email(recipient, message_type):
@@ -98,14 +112,13 @@ def make_email(recipient, message_type):
         mail.Attachments.Add(Source=message.attachment)
     mail.HtmlBody = text
 
-    mail.Save()
+    # mail.Save()
 
 
 # import_address
 def import_info():
-
     PATH = os.path.abspath('../email_data/send_info/')
-    csv_name = 'feb_new_user_import.csv'
+    csv_name = 'feb_new_user_import_test.csv'
     joined = os.path.join(PATH,"*.csv")
     files = glob.glob(joined)
     # print(files)
@@ -125,6 +138,7 @@ def import_info():
     message_type = input(default_input_message)
     recipients = pd.read_csv(PATH)
     for recipient_row in recipients.iterrows():
+
         make_email(recipient_row, message_type)
 
 

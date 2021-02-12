@@ -79,8 +79,11 @@ def check_started(course_dataframe, static_headers):
 def combine_report(df_list):
     df_list = df_list
     report = pd.DataFrame
-    report = df_list[0].loc[:, :]
-    # report = df_list[0].loc[:, :]
+    try:
+        report = df_list[0].loc[:, :]
+    except:
+        print("Check to make sure files are in the data folder.")
+
     chapters = {'chapter_01': "Chapter 1",
                 'chapter_02': "Chapter 2",
                 'chapter_03': "Chapter 3",
