@@ -36,7 +36,7 @@ def get_csv():
         course_id = str(v)
         csv_url = f"https://dstrainings.com/report/completion/index.php?course={course_id}&format=csv"
         # print(csv_url)
-        # webbrowser.open(csv_url, autoraise=False)
+        webbrowser.open(csv_url, autoraise=False)
 
     files = glob.glob(downloads)
 
@@ -282,4 +282,4 @@ def export_to_excel(df_list):
 # def export(list_df):
 # db import/export tbd
 if __name__ == "__main__":
-    print("")
+    get_csv()
