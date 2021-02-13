@@ -6,6 +6,7 @@ import os, glob, sys, re
 import datetime
 import webbrowser
 import urllib as url
+
 # import requests
 import shutil
 from export_format import prep_df, formats
@@ -14,7 +15,7 @@ from export_format import prep_df, formats
 data_dir = os.path.abspath("../data")
 export_dir = os.path.abspath("../export")
 download_dir = os.path.abspath("/home/matthias/Downloads")
-downloads = os.path.join(download_dir,'completion-*')
+downloads = os.path.join(download_dir, "completion-*")
 today = datetime.datetime.date(datetime.datetime.now())
 
 
@@ -24,24 +25,27 @@ def make_date(one_date):
     new_date = datetime.datetime.date(one_date)
     return new_date
 
+
 # import app.format as format
 # import report_maker
 def get_csv():
     PATH = "../course_id.csv"
-    course_id_df = pd.read_csv(PATH,)
-    course_ids = course_id_df.loc[:,'id']
+    course_id_df = pd.read_csv(
+        PATH,
+    )
+    course_ids = course_id_df.loc[:, "id"]
     # url.request.urlretrieve(csv_url, data_dir+"test.csv")
 
-    for k,v in course_ids.items():
+    for k, v in course_ids.items():
         course_id = str(v)
         csv_url = f"https://dstrainings.com/report/completion/index.php?course={course_id}&format=csv"
-        # print(csv_url)
-        webbrowser.open(csv_url, autoraise=False)
+        # webbrowser.open(csv_url, autoraise=False)
 
     files = glob.glob(downloads)
 
     # for file in files:
     #     shutil.move(file,data_dir)
+
 
 # https://dstrainings.com/report/completion/index.php?course={course_id}&format=csv
 # import
@@ -68,6 +72,7 @@ def import_path():
 
     return path_list
 
+
 def get_month(file_path):
     file = file_path
     month = re.search(r"-(.*?)_c", file)
@@ -77,6 +82,27 @@ def get_month(file_path):
     month.strip()
 
     return month
+
+
+def get_hours(ch_num):
+    # chapter_hours =
+    return {
+        "chapter_01": 2.5,
+        "chapter_02": 2,
+        "chapter_03": 2.5,
+        "chapter_04": 4,
+        "chapter_05": 4,
+        "chapter_06": 1.5,
+        "chapter_07": 2,
+        "chapter_08": 4,
+        "chapter_09": 4,
+        "chapter_10": 2.5,
+        "chapter_11": 2.5,
+        "chapter_12": 6,
+        "chapter_13": 1.5,
+        "chapter_14": 2,
+    }.get(ch_num, 2)
+
 
 def import_csvs(path_list):
     path_list = path_list
@@ -107,18 +133,20 @@ def import_data():
 
     return dataframes
 
+
 def clean_up():
     """Resets the data folder and archives files currently within prior to next run"""
+
+
 # export
 def export_as_csv(df):
     df_list = df
     dt = datetime.datetime.date(datetime.datetime.now())
-    dt = datetime.datetime.strftime(dt,'%Y-%m-%d')
+    dt = datetime.datetime.strftime(dt, "%Y-%m-%d")
     for d in df_list[1:]:
-        print(d)
-        if d['Instution'] != None :
+        if d["Instution"] != None:
             try:
-                institution = d.loc[0,"Institution"]
+                institution = d.loc[0, "Institution"]
                 institution = institution.lower()
                 filename = f"{institution}_status_update_{dt}.csv"
                 export = os.path.join(export_dir, filename)
@@ -130,19 +158,19 @@ def export_as_csv(df):
 def export_to_excel(df_list):
     df_list = df_list
 
-    print(df_list[1].loc[:,'Month'])
     # Gets month from course report and looks up recorded start date
-    month = df_list[1].loc[0,'Month']
+    month = df_list[1].loc[0, "Month"]
     date = datetime.datetime.date(datetime.datetime.now())
-    today = datetime.datetime.strftime(date, '%B%d-%Y')
+    today = datetime.datetime.strftime(date, "%B%d-%Y")
     PATH = "../course_start_dates.csv"
 
-    course_dates= pd.read_csv(PATH)
-    start_date = course_dates.loc[course_dates['cohort_month']==month,'start_date']
-    start_date = datetime.datetime.strptime(str(start_date.item()),'%Y-%m-%d')
+    course_dates = pd.read_csv(PATH)
+    start_date = course_dates.loc[course_dates["cohort_month"] == month, "start_date"]
+    start_date = datetime.datetime.strptime(str(start_date.item()), "%Y-%m-%d")
+    start_date = datetime.datetime.date(start_date)
 
-    release_2 = datetime.datetime.date(start_date + datetime.timedelta(days=7))
-    release_3 = datetime.datetime.date(start_date + datetime.timedelta(days=14))
+    release_2 = start_date + datetime.timedelta(days=7)
+    release_3 = start_date + datetime.timedelta(days=14)
 
     dates = [start_date, release_2, release_3]
 
@@ -151,25 +179,18 @@ def export_to_excel(df_list):
         n_df = prep_df(df)
         prepped_df.append(n_df)
     # creates writer for pd and xlswriter
-    writer = pd.ExcelWriter(f"../export/{month}_status_update_{date}.xlsx",
-                            engine="xlsxwriter")
+    writer = pd.ExcelWriter(
+        f"../export/{month}_status_update_{date}.xlsx", engine="xlsxwriter", date_format="mm/dd/yy"
+    )
     month_t = month.title()
-    sola_sheet = f'SOLA {month_t} Update {date}'
-    voa_sheet = f'VOA {month_t} Update {date}'
-    if prepped_df[0].loc[0, "Institution"] == 'VOAWW':
-        prepped_df[0].to_excel(writer,
-                               sheet_name=voa_sheet,
-                               startrow=3)
-        prepped_df[1].to_excel(writer,
-                               sheet_name=sola_sheet,
-                               startrow=3)
-    if prepped_df[0].loc[0, "Institution"] == 'SOLA':
-        prepped_df[1].to_excel(writer,
-                               sheet_name=voa_sheet,
-                               startrow=3)
-        prepped_df[0].to_excel(writer,
-                               sheet_name=sola_sheet,
-                               startrow=3)
+    sola_sheet = f"SOLA {month_t} Update {date}"
+    voa_sheet = f"VOA {month_t} Update {date}"
+    if prepped_df[0].loc[0, "Institution"] == "VOAWW":
+        prepped_df[0].to_excel(writer, sheet_name=voa_sheet, startrow=3)
+        prepped_df[1].to_excel(writer, sheet_name=sola_sheet, startrow=3)
+    if prepped_df[0].loc[0, "Institution"] == "SOLA":
+        prepped_df[1].to_excel(writer, sheet_name=voa_sheet, startrow=3)
+        prepped_df[0].to_excel(writer, sheet_name=sola_sheet, startrow=3)
 
     workbook = writer.book
     sola_worksheet = writer.sheets[sola_sheet]
@@ -180,62 +201,66 @@ def export_to_excel(df_list):
         set_2 = ["$O1:$U1", "$O2:$U2"]
         set_3 = ["$V1:$Y1", "$V2:$Y2"]
 
-        header_format = workbook.add_format({
-            "align": "center",
-            "bold": True,
-            "valign": "center",
-            "bg_color": "#F2F4F4",
-            "left": 1,
-            "right": 1,
-            "top": 1,
-        })
+        header_format = workbook.add_format(
+            {
+                "align": "center",
+                "bold": True,
+                "valign": "center",
+                "bg_color": "#F2F4F4",
+                "left": 1,
+                "right": 1,
+                "top": 1,
+            }
+        )
 
-        header_format2 = workbook.add_format({
-            "align": "center",
-            "bold": True,
-            "valign": "center",
-            "bg_color": "#F2F4F4",
-        })
+        header_format2 = workbook.add_format(
+            {
+                "align": "center",
+                "bold": True,
+                "valign": "center",
+                "bg_color": "#F2F4F4",
+            }
+        )
 
-        worksheet.conditional_format("A1:AA3",
-                                     {"type": "blanks", "format": header_format2})
-        worksheet.conditional_format("A1:AA3",
-                                     {"type": "no_blanks",
-                                      "format": header_format2})
+        worksheet.conditional_format(
+            "A1:AB3", {"type": "blanks", "format": header_format2}
+        )
+        worksheet.conditional_format(
+            "A1:AB3", {"type": "no_blanks", "format": header_format2}
+        )
         # Merge and format header row
         worksheet.merge_range(
             set_1[0],
             f'Set #1 - Opened {start_date.strftime("%m/%d/%Y")}',
-            header_format)
-        
+            header_format,
+        )
+
         worksheet.merge_range(
-            set_2[0],
-            f'Set #2 - Opened {release_2.strftime("%m/%d/%Y")}',
-            header_format)
-        
+            set_2[0], f'Set #2 - Opened {release_2.strftime("%m/%d/%Y")}', header_format
+        )
+
         worksheet.merge_range(
-            set_3[0],
-            f'Set #3 - Opened {release_3.strftime("%m/%d/%Y")}',
-            header_format)
+            set_3[0], f'Set #3 - Opened {release_3.strftime("%m/%d/%Y")}', header_format
+        )
 
         status = []
         for d in dates:
-            d = make_date(d)
-            date = make_date(date)
+            # d = make_date(d)
+            # date = make_date(date)
             if d <= date:
                 status.append("Open")
             else:
                 status.append("Closed")
 
-        worksheet.merge_range(set_1[1],
-                              f"These courses are: {status[0]}",
-                              header_format)
-        worksheet.merge_range(set_2[1],
-                              f"These courses are: {status[1]}",
-                              header_format)
-        worksheet.merge_range(set_3[1],
-                              f"These courses are: {status[2]}",
-                              header_format)
+        worksheet.merge_range(
+            set_1[1], f"These courses are: {status[0]}", header_format
+        )
+        worksheet.merge_range(
+            set_2[1], f"These courses are: {status[1]}", header_format
+        )
+        worksheet.merge_range(
+            set_3[1], f"These courses are: {status[2]}", header_format
+        )
 
         duedate1 = release_2
         duedate2 = release_2 + datetime.timedelta(days=2)
@@ -248,22 +273,32 @@ def export_to_excel(df_list):
         worksheet.write("G3", "2.5hr", header_format)
         worksheet.write("H3", "2hr", header_format)
         worksheet.write("I3", "2.5hr", header_format)
-        worksheet.write("J3", f'Due Date: {duedate1.strftime("%m/%d/%Y")}', header_format)
+        worksheet.write(
+            "J3", f'Due Date: {duedate1.strftime("%m/%d/%Y")}', header_format
+        )
         worksheet.write("K3", "4hr", header_format)
         worksheet.write("L3", "1.5hr", header_format)
         worksheet.write("M3", "2hr", header_format)
-        worksheet.write("N3", f'Due Date: {duedate2.strftime("%m/%d/%Y")}', header_format)
+        worksheet.write(
+            "N3", f'Due Date: {duedate2.strftime("%m/%d/%Y")}', header_format
+        )
         worksheet.write("O3", "4hr", header_format)
         worksheet.write("P3", "1.5hr", header_format)
         worksheet.write("Q3", "2hr", header_format)
-        worksheet.write("R3", f'Due Date: {duedate3.strftime("%m/%d/%Y")}', header_format)
+        worksheet.write(
+            "R3", f'Due Date: {duedate3.strftime("%m/%d/%Y")}', header_format
+        )
         worksheet.write("S3", "4hr", header_format)
         worksheet.write("T3", "3hr", header_format)
-        worksheet.write("U3", f'Due Date: {duedate4.strftime("%m/%d/%Y")}', header_format)
+        worksheet.write(
+            "U3", f'Due Date: {duedate4.strftime("%m/%d/%Y")}', header_format
+        )
         worksheet.write("V3", "4hr", header_format)
         worksheet.write("W3", "2.5hr", header_format)
         worksheet.write("X3", "6hr", header_format)
-        worksheet.write("Y3", f'Due Date: {duedate5.strftime("%m/%d/%Y")}', header_format)
+        worksheet.write(
+            "Y3", f'Due Date: {duedate5.strftime("%m/%d/%Y")}', header_format
+        )
         worksheet.write("Z3", "2hr", header_format)
         format = formats(workbook, worksheet)
 
@@ -276,7 +311,7 @@ def export_to_excel(df_list):
         worksheet.conditional_format(format.location, format.con_started())
         worksheet.conditional_format(format.location, format.stale_date())
 
-        writer.save()
+    writer.save()
 
 
 # def export(list_df):
