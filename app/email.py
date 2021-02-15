@@ -11,6 +11,7 @@ class Message:
         self.name = ""
         self.recipient = df_row
         self.message_type = ""
+        self.attachment = None
         self.template = ""
         self.outputText = "None has been specified. Please run a constructor"
 
@@ -20,7 +21,7 @@ class Message:
     def cpr_start_email(self):
         self.email = str(self.recipient["personal_email"])
         self.supervisor_email = str(self.recipient["sup_email"])
-        self.attachement = None
+        self.attachment = None
         self.name = str(self.recipient["first_name"])
         self.link = str(self.recipient["registration_link"])
         self.close_date = str(self.recipient["closing_date"])
@@ -34,7 +35,7 @@ class Message:
         name = self.name
         link = self.link
         close_date = self.close_date
-        outputText = template.render(
+        self.outputText = template.render(
             name=name, link=link, close_date=close_date  # Include args for render
         )
 
@@ -125,22 +126,23 @@ def make_email(recipient, message_type):
         mail.Attachments.Add(Source=message.attachment)
     mail.HtmlBody = text
 
-    # mail.Save()
+    mail.Save()
 
 
 # import_address
 def import_info():
     PATH = os.path.abspath("../email_data/send_info/")
-    csv_name = "feb_new_user_import_test.csv"
+    csv_name = "feb_new_user_import.csv"
     joined = os.path.join(PATH, "*.csv")
     files = glob.glob(joined)
     # print(files)
     for f in files:
         print(f)
 
-    # csv_name= input("What file to use? - Use the full name after the last \\ \n")
+    csv_name= input("What file to use? - Use the full name after the last \\ \n")
     PATH = os.path.join(PATH, csv_name)
     print(PATH)
+    recipients = pd.read_csv(PATH)
     default_input_message = """
     Which would message?\n
     cpr\n
@@ -149,10 +151,9 @@ def import_info():
     """
 
     message_type = input(default_input_message)
-    recipients = pd.read_csv(PATH)
     for recipient_row in recipients.iterrows():
 
-        make_email(recipient_row, message_type)
+        make_email(recipient_row, message_type="cpr")
 
 
 if __name__ == "__main__":
