@@ -66,21 +66,21 @@ class Message:
         )
 
     def fhr_reminder_email(self):
-        update_df = pd.read_csv("../export/feb_status_update_2021-02-10.csv")
-        update_info = update_df.loc[
-            update_df["ID Number"] == self.recipient["idnumber"]
-        ]
+        update_df = pd.read_csv("../export/feb_status_update_2021-02-17.csv")
+        # update_info = update_df.loc[
+        #     update_df["ID Number"] == self.recipient["idnumber"]
+        # ]
         self.fhr_start_email()
-        start_date = datetime.date(
-            datetime.strptime(self.recipient["hire_date"], "%Y-%m-%d")
-        )
-        days_left = (start_date + timedelta(days=120)) - datetime.now().date()
-        days_left = days_left.days
+        # start_date = datetime.date(
+        #     datetime.strptime(self.recipient["hire_date"], "%Y-%m-%d")
+        # )
+        # days_left = (start_date + timedelta(days=120)) - datetime.now().date()
+        # days_left = days_left.days
         date = datetime.now()
         date = date.strftime("%m/%d/%Y")
         self.subject = f"Training Reminder/Update - {date}"
         self.template_file = "reminder_40hr.html"
-        update_info = update_info.to_html()
+        # update_info = update_info.to_html()
         templateLoader = jinja2.FileSystemLoader(searchpath="../email_data/templates")
         templateEnv = jinja2.Environment(loader=templateLoader)
         name = self.name
@@ -91,8 +91,8 @@ class Message:
         self.outputText = self.template.render(
             name=name,  # Include args for render
             month=month,
-            days_left=days_left,
-            update_info=update_info,
+            # days_left=days_left,
+            # update_info=update_info,
         )
 
     def get_body(self):
@@ -153,7 +153,7 @@ def import_info():
     message_type = input(default_input_message)
     for recipient_row in recipients.iterrows():
 
-        make_email(recipient_row, message_type="cpr")
+        make_email(recipient_row, message_type)
 
 
 if __name__ == "__main__":
