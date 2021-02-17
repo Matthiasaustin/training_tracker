@@ -39,7 +39,7 @@ def get_csv():
     for k, v in course_ids.items():
         course_id = str(v)
         csv_url = f"https://dstrainings.com/report/completion/index.php?course={course_id}&format=csv"
-        webbrowser.open(csv_url, autoraise=False)
+        # webbrowser.open(csv_url, autoraise=False)
 
     files = glob.glob(downloads)
 

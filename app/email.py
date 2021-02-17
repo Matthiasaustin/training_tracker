@@ -43,11 +43,11 @@ class Message:
         self.email = str(self.recipient["email"])
         self.supervisor_email = str(self.recipient["profile_field_supervisor_email"])
         self.attachment = PATH = os.path.abspath(
-            "../email_data/attachments/sola_mar_2021_syllabus.pdf"
+            "../email_data/attachments/mar_2021_syllabus.pdf"
         )
         self.template_file = "welcome_40hr.html"
         self.name = str(self.recipient["firstname"])
-        self.month = "February"
+        self.month = "March"
         self.subject = f"Welcome to the {self.month} 40hr Core"
         self.username = str(self.recipient["username"])
         self.password = str(self.recipient["password"])
