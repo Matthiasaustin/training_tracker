@@ -43,7 +43,7 @@ class Message:
         self.email = str(self.recipient["email"])
         self.supervisor_email = str(self.recipient["profile_field_supervisor_email"])
         self.attachment = PATH = os.path.abspath(
-            "../email_data/attachments/feb_2021_syllabus.pdf"
+            "../email_data/attachments/sola_mar_2021_syllabus.pdf"
         )
         self.template_file = "welcome_40hr.html"
         self.name = str(self.recipient["firstname"])
@@ -66,7 +66,7 @@ class Message:
         )
 
     def fhr_reminder_email(self):
-        update_df = pd.read_csv("../export/feb_status_update_2021-02-17.csv")
+        update_df = pd.read_csv("../export/feb_status_update_2021-02-19.csv")
         # update_info = update_df.loc[
         #     update_df["ID Number"] == self.recipient["idnumber"]
         # ]
