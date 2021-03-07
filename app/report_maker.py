@@ -124,7 +124,6 @@ def combine_report(df_list):
                 report.loc[index, chapter_col] = df.loc[chapter_col]
             if name not in report.values:
                 report = report.append(df)
-
     report.fillna(value="Not Enrolled", inplace=True)
 
     return report

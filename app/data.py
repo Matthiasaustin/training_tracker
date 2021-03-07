@@ -9,13 +9,9 @@ import urllib as url
 
 # import requests
 import shutil
-from export_format import prep_df, formats
+from app.export_format import prep_df, formats
 
 
-data_dir = os.path.abspath("../data")
-export_dir = os.path.abspath("../export")
-download_dir = os.path.abspath("/home/matthias/Downloads")
-downloads = os.path.join(download_dir, "completion-*")
 today = datetime.datetime.date(datetime.datetime.now())
 
 
@@ -29,10 +25,10 @@ def make_date(one_date):
 # import app.format as format
 # import report_maker
 def get_csv():
-    PATH = "../course_id.csv"
-    course_id_df = pd.read_csv(
-        PATH,
-    )
+    try:
+        course_id_df = pd.read_csv("../course_id.csv")
+    except:
+        course_id_df = pd.read_csv("course_id.csv")
     course_ids = course_id_df.loc[:, "id"]
     # url.request.urlretrieve(csv_url, data_dir+"test.csv")
 
@@ -41,23 +37,25 @@ def get_csv():
         csv_url = f"https://dstrainings.com/report/completion/index.php?course={course_id}&format=csv"
         # webbrowser.open(csv_url, autoraise=False)
 
-    files = glob.glob(downloads)
-
-    # for file in files:
-    #     shutil.move(file,data_dir)
 
 
 # https://dstrainings.com/report/completion/index.php?course={course_id}&format=csv
 # import
-def import_path():
+def import_path(month, data_dir):
 
-    # PATH = os.path.expanduser("~/*Documents/*!Matthias/*code/*training_reporter/*data")
-    # user_path = input("What path to your csv files? Type N for default\n")
-    # if user_path == "N" or "n":
-    #     user_path = "~/Documents/code/training_tracker/data"
-    user_path = "../data/"
+    if os.name == "posix":
+        download_dir = os.path.abspath("/home/matthias/Downloads")
+    if os.name == "nt":
+        download_dir = os.path.expanduser("~/maustin/Downloads")
+    print(download_dir)
+    downloads = os.path.join(download_dir, f"completion-{month}*")
+    print(downloads)
+    files =  glob.glob(downloads)
+    print(files)
+    for f in files:
+        shutil.move(f, data_dir)
 
-    PATH = os.path.expanduser(user_path)
+    PATH = data_dir
     # what type of files are read in
     EXT = "*.csv"
 
@@ -126,9 +124,8 @@ def import_csvs(path_list):
     return imported_csv
 
 
-def import_data():
-    get_csv()
-    path_list = import_path()
+def import_data(month, data_dir):
+    path_list = import_path(month, data_dir)
     dataframes = import_csvs(path_list)
 
     return dataframes
@@ -139,8 +136,9 @@ def clean_up():
 
 
 # export
-def export_as_csv(df):
+def export_as_csv(df, export_dir):
     df_list = df
+    export_dir = export_dir
     dt = datetime.datetime.date(datetime.datetime.now())
     dt = datetime.datetime.strftime(dt, "%Y-%m-%d")
     for d in df_list[1:]:
@@ -162,7 +160,7 @@ def export_to_excel(df_list):
     month = df_list[1].loc[0, "Month"]
     date = datetime.datetime.date(datetime.datetime.now())
     today = datetime.datetime.strftime(date, "%B%d-%Y")
-    PATH = "../course_start_dates.csv"
+    PATH = "course_start_dates.csv"
 
     course_dates = pd.read_csv(PATH)
     start_date = course_dates.loc[course_dates["cohort_month"] == month, "start_date"]
@@ -178,17 +176,26 @@ def export_to_excel(df_list):
     for df in df_list:
         n_df = prep_df(df)
         prepped_df.append(n_df)
+
     # creates writer for pd and xlswriter
     writer = pd.ExcelWriter(
-        f"../export/{month}_status_update_{date}.xlsx", engine="xlsxwriter", date_format="mm/dd/yy"
+        f"export/{month}_status_update_{date}.xlsx", engine="xlsxwriter", date_format="mm/dd/yy"
     )
     month_t = month.title()
-    sola_sheet = f"SOLA {month_t} Update {date}"
+    sola_sheet = f"SOLA Update {date}"
     voa_sheet = f"VOA {month_t} Update {date}"
-    if prepped_df[0].loc[0, "Institution"] == "VOAWW":
+    try:
+        first_institution = prepped_df[0].loc[0,"Institution"]
+    except:
+        if prepped_df[1].loc[0,"Institution"] == "VOAWW":
+            first_institution = "SOLA"
+        else:
+            print("Only one institution listed, which did not participate?")
+            institution = input()
+    if first_institution == "VOAWW":
         prepped_df[0].to_excel(writer, sheet_name=voa_sheet, startrow=3)
         prepped_df[1].to_excel(writer, sheet_name=sola_sheet, startrow=3)
-    if prepped_df[0].loc[0, "Institution"] == "SOLA":
+    if first_institution == "SOLA":
         prepped_df[1].to_excel(writer, sheet_name=voa_sheet, startrow=3)
         prepped_df[0].to_excel(writer, sheet_name=sola_sheet, startrow=3)
 
@@ -318,3 +325,10 @@ def export_to_excel(df_list):
 # db import/export tbd
 if __name__ == "__main__":
     get_csv()
+
+    # if running from the sub folder app
+    data_dir = os.path.abspath("../data")
+    export_dir = os.path.abspath("../export")
+    download_dir = os.path.abspath("/home/matthias/Downloads")
+    downloads = os.path.join(download_dir, "completion-*")
+    today = datetime.datetime.date(datetime.datetime.now())

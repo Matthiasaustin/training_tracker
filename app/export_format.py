@@ -172,7 +172,6 @@ def prep_df(df):
             try:
                 df.loc[row[0], k] = v.date()
                 # df.loc[row[0], k] = datetime.date(v.strftime("%m/%d/%Y"))
-                print(df.loc[row[0], k])
             except:  # pass if turning it into a date doesn't work.
                 pass
 

@@ -1,15 +1,61 @@
 """
 Main program of the training reporter suite. The program onces complete will serve as the hub and "ui" through cli for various programs/modules for compiling reports and emailing staff/students
 """
+import pandas as pd
+import os
+import glob
+import shutil
+from datetime import datetime
 import app.data as data
+import app.report_maker as report_maker
 
 
 def main_program():
     """Provides cli ui and menu/logic forking to direct the user and provide results"""
 
     # Test Area for proof of concept run
-    df_list = data.import_data()
 
+    # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    #
+    # Need to add relative paths to data, export and downloads here to there
+    # aren't conflicts on local program runs. Add arguments for any function
+    # that locates files and add to local/global run times.
+    #
+    # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    data.get_csv()
+    data_dir = os.path.abspath("data/")
+    export_dir = os.path.abspath("export/")
+    date = datetime.now().strftime("%Y%m%d")
+
+    # make a directory for the data from today
+    try:
+        os.mkdir(f"data/Data{date}")
+    except FileExistsError:
+        pass
+
+    # assign archive folder
+    archive = os.path.abspath(f"data/Data{date}")
+
+    download_dir = os.path.abspath("/home/matthias/Downloads")
+    downloads = os.path.join(download_dir, "completion-*")
+    files = glob.glob(downloads)
+    months = []
+    for f in files:
+        months.append(data.get_month(f))
+    months = set(months)
+
+    for month in months:
+        csv = data.import_data(month, data_dir)
+        records = report_maker.parse_data(csv)
+        data.export_to_excel(records)
+        PATH = os.path.join(os.path.abspath("data"),"*.csv")
+        files = glob.glob(PATH)
+        for f in files:
+            shutil.move(f, archive)
+
+
+
+    # data.export_as_csv(x)
     # *************************************************
 
     # initial prompt and welcome

@@ -12,3 +12,4 @@ __pycache__
 /env/
 /email_data/send_info/*.csv
 /email_data/attachments/
+/__pycache__/
