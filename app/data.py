@@ -11,8 +11,21 @@ import urllib as url
 import shutil
 from app.export_format import prep_df, formats
 
-
 today = datetime.datetime.date(datetime.datetime.now())
+
+
+def grade_courses():
+    try:
+        course_id_df = pd.read_csv("../course_id.csv")
+    except Exception:
+        course_id_df = pd.read_csv("course_id.csv")
+    course_ids = course_id_df.loc[:, "id"]
+    # url.request.urlretrieve(csv_url, data_dir+"test.csv")
+
+    for k, v in course_ids.items():
+        course_id = str(v)
+        url = f"https://dstrainings.com/report/completion/index.php?course={course_id}"
+        webbrowser.open(url, autoraise=False)
 
 
 def make_date(one_date):
@@ -27,7 +40,7 @@ def make_date(one_date):
 def get_csv():
     try:
         course_id_df = pd.read_csv("../course_id.csv")
-    except:
+    except Exception:
         course_id_df = pd.read_csv("course_id.csv")
     course_ids = course_id_df.loc[:, "id"]
     # url.request.urlretrieve(csv_url, data_dir+"test.csv")
@@ -35,22 +48,17 @@ def get_csv():
     for k, v in course_ids.items():
         course_id = str(v)
         csv_url = f"https://dstrainings.com/report/completion/index.php?course={course_id}&format=csv"
-        # webbrowser.open(csv_url, autoraise=False)
-
+        webbrowser.open(csv_url, autoraise=False)
 
 
 # https://dstrainings.com/report/completion/index.php?course={course_id}&format=csv
 # import
-def import_path(month, data_dir):
+def import_path(month, data_dir, download_dir):
 
-    if os.name == "posix":
-        download_dir = os.path.abspath("/home/matthias/Downloads")
-    if os.name == "nt":
-        download_dir = os.path.expanduser("~/maustin/Downloads")
     print(download_dir)
     downloads = os.path.join(download_dir, f"completion-{month}*")
     print(downloads)
-    files =  glob.glob(downloads)
+    files = glob.glob(downloads)
     print(files)
     for f in files:
         shutil.move(f, data_dir)
@@ -112,7 +120,9 @@ def import_csvs(path_list):
         chapter_number = chapter_number.group()
 
         # reads the csv file in as a dataframe, fills any missing values with incomplete
-        new_csv = pd.read_csv(file, parse_dates=["Course complete"], dayfirst=True)
+        new_csv = pd.read_csv(file,
+                              parse_dates=["Course complete"],
+                              dayfirst=True)
         new_csv.fillna("Incomplete", inplace=True)
         month = get_month(file)
         new_csv["Chapter"] = chapter_number
@@ -124,8 +134,8 @@ def import_csvs(path_list):
     return imported_csv
 
 
-def import_data(month, data_dir):
-    path_list = import_path(month, data_dir)
+def import_data(month, data_dir, download_dir):
+    path_list = import_path(month, data_dir, download_dir)
     dataframes = import_csvs(path_list)
 
     return dataframes
@@ -136,22 +146,32 @@ def clean_up():
 
 
 # export
-def export_as_csv(df, export_dir):
+def export_as_csv(df, export_dir, style="institutions" ):
+
     df_list = df
     export_dir = export_dir
     dt = datetime.datetime.date(datetime.datetime.now())
     dt = datetime.datetime.strftime(dt, "%Y-%m-%d")
-    for d in df_list[1:]:
-        if d["Instution"] != None:
-            try:
-                institution = d.loc[0, "Institution"]
-                institution = institution.lower()
-                filename = f"{institution}_status_update_{dt}.csv"
-                export = os.path.join(export_dir, filename)
-                d.to_csv(export, index=False)
-            except:
-                print("Something is wrong in export_as_csv w/ Range")
-
+    if style == "insitutions":
+        for d in df_list[1:]:
+            if d["Instution"] != None:
+                try:
+                    institution = d.loc[0, "Institution"]
+                    institution = institution.lower()
+                    filename = f"{institution}_status_update_{dt}.csv"
+                    export = os.path.join(export_dir, filename)
+                    d.to_csv(export, index=False)
+                except Exception:
+                    print("Something is wrong in export_as_csv w/ Range")
+    elif style == "combined":
+        print("Printing Combined CSV")
+        try:
+            month = df_list.loc[0,"Month"]
+            filename = f"{month.lower()}_combinded_update_{dt}.csv"
+            export = os.path.join(export_dir,filename)
+            df.to_csv(export, index=False)
+        except Exception:
+            raise Exception("Export combined CSV Failed.")
 
 def export_to_excel(df_list):
     df_list = df_list
@@ -163,7 +183,8 @@ def export_to_excel(df_list):
     PATH = "course_start_dates.csv"
 
     course_dates = pd.read_csv(PATH)
-    start_date = course_dates.loc[course_dates["cohort_month"] == month, "start_date"]
+    start_date = course_dates.loc[course_dates["cohort_month"] == month,
+                                  "start_date"]
     start_date = datetime.datetime.strptime(str(start_date.item()), "%Y-%m-%d")
     start_date = datetime.datetime.date(start_date)
 
@@ -178,16 +199,16 @@ def export_to_excel(df_list):
         prepped_df.append(n_df)
 
     # creates writer for pd and xlswriter
-    writer = pd.ExcelWriter(
-        f"export/{month}_status_update_{date}.xlsx", engine="xlsxwriter", date_format="mm/dd/yy"
-    )
+    writer = pd.ExcelWriter(f"export/{month}_status_update_{date}.xlsx",
+                            engine="xlsxwriter",
+                            date_format="mm/dd/yy")
     month_t = month.title()
     sola_sheet = f"SOLA Update {date}"
     voa_sheet = f"VOA {month_t} Update {date}"
     try:
-        first_institution = prepped_df[0].loc[0,"Institution"]
+        first_institution = prepped_df[0].loc[0, "Institution"]
     except:
-        if prepped_df[1].loc[0,"Institution"] == "VOAWW":
+        if prepped_df[1].loc[0, "Institution"] == "VOAWW":
             first_institution = "SOLA"
         else:
             print("Only one institution listed, which did not participate?")
@@ -208,33 +229,31 @@ def export_to_excel(df_list):
         set_2 = ["$O1:$U1", "$O2:$U2"]
         set_3 = ["$V1:$Y1", "$V2:$Y2"]
 
-        header_format = workbook.add_format(
-            {
-                "align": "center",
-                "bold": True,
-                "valign": "center",
-                "bg_color": "#F2F4F4",
-                "left": 1,
-                "right": 1,
-                "top": 1,
-            }
-        )
+        header_format = workbook.add_format({
+            "align": "center",
+            "bold": True,
+            "valign": "center",
+            "bg_color": "#F2F4F4",
+            "left": 1,
+            "right": 1,
+            "top": 1,
+        })
 
-        header_format2 = workbook.add_format(
-            {
-                "align": "center",
-                "bold": True,
-                "valign": "center",
-                "bg_color": "#F2F4F4",
-            }
-        )
+        header_format2 = workbook.add_format({
+            "align": "center",
+            "bold": True,
+            "valign": "center",
+            "bg_color": "#F2F4F4",
+        })
 
-        worksheet.conditional_format(
-            "A1:AB3", {"type": "blanks", "format": header_format2}
-        )
-        worksheet.conditional_format(
-            "A1:AB3", {"type": "no_blanks", "format": header_format2}
-        )
+        worksheet.conditional_format("A1:AB3", {
+            "type": "blanks",
+            "format": header_format2
+        })
+        worksheet.conditional_format("A1:AB3", {
+            "type": "no_blanks",
+            "format": header_format2
+        })
         # Merge and format header row
         worksheet.merge_range(
             set_1[0],
@@ -243,12 +262,12 @@ def export_to_excel(df_list):
         )
 
         worksheet.merge_range(
-            set_2[0], f'Set #2 - Opened {release_2.strftime("%m/%d/%Y")}', header_format
-        )
+            set_2[0], f'Set #2 - Opened {release_2.strftime("%m/%d/%Y")}',
+            header_format)
 
         worksheet.merge_range(
-            set_3[0], f'Set #3 - Opened {release_3.strftime("%m/%d/%Y")}', header_format
-        )
+            set_3[0], f'Set #3 - Opened {release_3.strftime("%m/%d/%Y")}',
+            header_format)
 
         status = []
         for d in dates:
@@ -259,15 +278,12 @@ def export_to_excel(df_list):
             else:
                 status.append("Closed")
 
-        worksheet.merge_range(
-            set_1[1], f"These courses are: {status[0]}", header_format
-        )
-        worksheet.merge_range(
-            set_2[1], f"These courses are: {status[1]}", header_format
-        )
-        worksheet.merge_range(
-            set_3[1], f"These courses are: {status[2]}", header_format
-        )
+        worksheet.merge_range(set_1[1], f"These courses are: {status[0]}",
+                              header_format)
+        worksheet.merge_range(set_2[1], f"These courses are: {status[1]}",
+                              header_format)
+        worksheet.merge_range(set_3[1], f"These courses are: {status[2]}",
+                              header_format)
 
         duedate1 = release_2
         duedate2 = release_2 + datetime.timedelta(days=2)
@@ -280,32 +296,27 @@ def export_to_excel(df_list):
         worksheet.write("G3", "2.5hr", header_format)
         worksheet.write("H3", "2hr", header_format)
         worksheet.write("I3", "2.5hr", header_format)
-        worksheet.write(
-            "J3", f'Due Date: {duedate1.strftime("%m/%d/%Y")}', header_format
-        )
+        worksheet.write("J3", f'Due Date: {duedate1.strftime("%m/%d/%Y")}',
+                        header_format)
         worksheet.write("K3", "4hr", header_format)
         worksheet.write("L3", "1.5hr", header_format)
         worksheet.write("M3", "2hr", header_format)
-        worksheet.write(
-            "N3", f'Due Date: {duedate2.strftime("%m/%d/%Y")}', header_format
-        )
+        worksheet.write("N3", f'Due Date: {duedate2.strftime("%m/%d/%Y")}',
+                        header_format)
         worksheet.write("O3", "4hr", header_format)
         worksheet.write("P3", "1.5hr", header_format)
         worksheet.write("Q3", "2hr", header_format)
-        worksheet.write(
-            "R3", f'Due Date: {duedate3.strftime("%m/%d/%Y")}', header_format
-        )
+        worksheet.write("R3", f'Due Date: {duedate3.strftime("%m/%d/%Y")}',
+                        header_format)
         worksheet.write("S3", "4hr", header_format)
         worksheet.write("T3", "3hr", header_format)
-        worksheet.write(
-            "U3", f'Due Date: {duedate4.strftime("%m/%d/%Y")}', header_format
-        )
+        worksheet.write("U3", f'Due Date: {duedate4.strftime("%m/%d/%Y")}',
+                        header_format)
         worksheet.write("V3", "4hr", header_format)
         worksheet.write("W3", "2.5hr", header_format)
         worksheet.write("X3", "6hr", header_format)
-        worksheet.write(
-            "Y3", f'Due Date: {duedate5.strftime("%m/%d/%Y")}', header_format
-        )
+        worksheet.write("Y3", f'Due Date: {duedate5.strftime("%m/%d/%Y")}',
+                        header_format)
         worksheet.write("Z3", "2hr", header_format)
         format = formats(workbook, worksheet)
 
@@ -324,8 +335,8 @@ def export_to_excel(df_list):
 # def export(list_df):
 # db import/export tbd
 if __name__ == "__main__":
-    get_csv()
 
+    grade_courses()
     # if running from the sub folder app
     data_dir = os.path.abspath("../data")
     export_dir = os.path.abspath("../export")

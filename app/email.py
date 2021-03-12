@@ -3,6 +3,7 @@ import pandas as pd
 import jinja2
 import os
 import glob
+import re
 from datetime import datetime, timedelta
 
 
@@ -66,10 +67,11 @@ class Message:
         )
 
     def fhr_reminder_email(self):
-        update_df = pd.read_csv("../export/feb_status_update_2021-02-19.csv")
-        # update_info = update_df.loc[
-        #     update_df["ID Number"] == self.recipient["idnumber"]
-        # ]
+        update_path = os.path.abspath("../email_data/send_info/march_combined_update.csv")
+        update_df = pd.read_csv(update_path)
+        update_info = update_df.loc[
+            update_df["Email address"] == self.recipient["email"]
+        ]
         self.fhr_start_email()
         # start_date = datetime.date(
         #     datetime.strptime(self.recipient["hire_date"], "%Y-%m-%d")
@@ -85,14 +87,74 @@ class Message:
         templateEnv = jinja2.Environment(loader=templateLoader)
         name = self.name
         month = self.month
-        update_info = ""
-
+        update_info = update_info.loc(axis=1)["Chapter 1",
+                                       "Chapter 2",
+                                       "Chapter 3",
+                                       "Chapter 4",
+                                       "Chapter 5",
+                                       "Chapter 6",
+                                       "Chapter 7",
+                                       "Chapter 8",
+                                       "Chapter 9",
+                                       "Chapter 10",
+                                       "Chapter 11",
+                                       "Chapter 12",
+                                       "Chapter 13",
+                                       "Chapter 14"]
+        update_info = update_info.transpose().to_html()
+        update_info = re.sub("<td>Not Started","<td style=\"background: orange;\">Not Started",update_info)
+        update_info = re.sub("<td>Started","<td style=\"background: yellow;\">Started",update_info)
+        update_info = re.sub("<td>\d.*:\d\d","<td style=\"background: green;\">Finished<\/td>",update_info)
+        update_info = re.sub("th>\d<\/th|th>\d\d<\/th","th>Status<\/th", update_info)
+        update_info = re.sub("th><\/th","th>Chapter<\/th",update_info)
         self.template = templateEnv.get_template(self.template_file)
         self.outputText = self.template.render(
             name=name,  # Include args for render
             month=month,
             # days_left=days_left,
-            # update_info=update_info,
+            update_info=update_info,
+        )
+
+    def peer_coaching(self):
+        self.email = str(self.recipient["email"])
+        self.supervisor_email = str(self.recipient["profile_field_supervisor_email"])
+        self.attachment = PATH = os.path.abspath(
+            "../email_data/attachments/virtual_peer_coaching_handouts.pdf"
+        )
+        self.template_file = "peer_coaching.html"
+        self.name = str(self.recipient["firstname"])
+        self.month = "March"
+        self.subject = f"March Virtual Peer Coaching Class Information"
+        self.username = str(self.recipient["username"])
+        self.password = str(self.recipient["password"])
+        templateLoader = jinja2.FileSystemLoader(searchpath="../email_data/templates")
+        templateEnv = jinja2.Environment(loader=templateLoader)
+        self.template = templateEnv.get_template(self.template_file)
+        name = self.name
+        month = self.month
+        username = self.username
+        password = self.password
+        self.outputText = self.template.render(
+            name=name,  # Include args for render
+            month=month,
+            username=username,
+            password=password,
+        )
+    def peer_coaching_reminder(self):
+        self.email = str(self.recipient["email"])
+        self.supervisor_email = str(self.recipient["profile_field_supervisor_email"])
+        self.template_file = "peer_coaching_reminder.html"
+        self.name = str(self.recipient["firstname"])
+        self.month = "March"
+        self.subject = f"Reminder: March Virtual Peer Coaching Class"
+        templateLoader = jinja2.FileSystemLoader(searchpath="../email_data/templates")
+        templateEnv = jinja2.Environment(loader=templateLoader)
+        self.template = templateEnv.get_template(self.template_file)
+        name = self.name
+        month = self.month
+        self.outputText = self.template.render(
+            name=name,  # Include args for render
+            month=month,
         )
 
     def get_body(self):
@@ -116,6 +178,10 @@ def make_email(recipient, message_type):
         message.fhr_start_email()
     elif message_type == "freminder":
         message.fhr_reminder_email()
+    elif message_type == "peer":
+        message.peer_coaching()
+    elif message_type == "peerR":
+        message.peer_coaching_reminder()
 
     mail.To = message.email
     mail.CC = message.supervisor_email
@@ -130,9 +196,9 @@ def make_email(recipient, message_type):
 
 
 # import_address
-def import_info():
+def import_info(message_type=None, csv_name=None):
     PATH = os.path.abspath("../email_data/send_info/")
-    csv_name = "feb_new_user_import.csv"
+    csv_name = "mar_new_user_import.csv"
     joined = os.path.join(PATH, "*.csv")
     files = glob.glob(joined)
     # print(files)
@@ -145,9 +211,12 @@ def import_info():
     recipients = pd.read_csv(PATH)
     default_input_message = """
     Which would message?\n
-    cpr\n
-    fstart (40hr Welcome message)\n
-    freminder (40hr Reminder message)\n
+    * cpr
+    * fstart (40hr Welcome message)
+    * freminder (40hr Reminder message)
+    * peer (Peer Coaching)
+    * peerR (Peer Coaching Reminder #1)
+    \n
     """
 
     message_type = input(default_input_message)
