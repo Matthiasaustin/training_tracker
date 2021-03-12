@@ -13,3 +13,4 @@ __pycache__
 /email_data/send_info/*.csv
 /email_data/attachments/
 /__pycache__/
+__pycache__
