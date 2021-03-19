@@ -92,7 +92,7 @@ def combine_report(df_list):
     try:
         report = df_list[0].loc[:, :]
     except Exception:
-        print("Check to make sure files are in the data folder.")
+        raise FilesNotFoundError("Check to make sure files are in the data folder.")
 
     chapters = {
         "chapter_01": "Chapter 1",
