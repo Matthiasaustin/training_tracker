@@ -58,7 +58,7 @@ def main_program():
             files = glob.glob(PATH)
             for f in files:
                 shutil.move(f, archive)
-        rerun = input("Rerun? yes or no").lower()
+        rerun = input("Rerun? yes or no\n").lower()
 
     # data.export_as_csv(x)
     # *************************************************
@@ -106,5 +106,5 @@ def run_single_report():
 if __name__ == "__main__":
 
     print("Welcome to Trainer Hub['working title']")
-    # main_program()
-    run_single_report()
+    main_program()
+    # run_single_report()

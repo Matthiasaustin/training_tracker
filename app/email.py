@@ -69,6 +69,7 @@ class Message:
     def fhr_reminder_email(self):
         update_path = os.path.abspath("../email_data/send_info/march_combined_update.csv")
         update_df = pd.read_csv(update_path)
+        self.attachment = None
         update_info = update_df.loc[
             update_df["Email address"] == self.recipient["email"]
         ]

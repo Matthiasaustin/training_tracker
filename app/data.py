@@ -167,7 +167,7 @@ def export_as_csv(df, export_dir, style="institutions" ):
         print("Printing Combined CSV")
         try:
             month = df_list.loc[0,"Month"]
-            filename = f"{month.lower()}_combinded_update_{dt}.csv"
+            filename = f"{month.lower()}_combined_update_{dt}.csv"
             export = os.path.join(export_dir,filename)
             df.to_csv(export, index=False)
         except Exception:
