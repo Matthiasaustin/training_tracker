@@ -1,7 +1,7 @@
 import pandas as pd
 import cProfile
 import numpy as np
-import data
+from app import data
 from datetime import datetime
 
 # hour_checker
@@ -91,7 +91,7 @@ def combine_report(df_list):
     report = pd.DataFrame
     try:
         report = df_list[0].loc[:, :]
-    except:
+    except Exception:
         print("Check to make sure files are in the data folder.")
 
     chapters = {
@@ -110,7 +110,6 @@ def combine_report(df_list):
         "chapter_13": "Chapter 13",
         "chapter_14": "Chapter 14",
     }
-
     for df in df_list:
         ch_in = df.loc[0, "Chapter"]
         chapter_col = chapters[ch_in]
@@ -121,9 +120,15 @@ def combine_report(df_list):
             name = df["Name"]
             if name in report.values and name != None:
                 index = report[report["Name"] == name].index.to_list()
+                # print(report[report["Name"] == name],name,"\n****\n")
+                # print(df.loc[chapter_col],name,"\n****\n")
+
                 report.loc[index, chapter_col] = df.loc[chapter_col]
+                # print(report,"\n****\n")
             if name not in report.values:
                 report = report.append(df)
+                report.reset_index(drop=True,inplace=True)
+
     report.fillna(value="Not Enrolled", inplace=True)
 
     return report
@@ -159,6 +164,7 @@ def parse_data(list_of_df):
         if row["Institution"] == "VOAWW":
             voa_report = voa_report.append(row, ignore_index=True)
     course_reports = [sola_report, voa_report]
+    data.export_as_csv(course_report,"export/", "combined")
     return course_reports
 
 
